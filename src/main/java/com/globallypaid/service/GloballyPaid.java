@@ -6,6 +6,7 @@ import com.globallypaid.exception.GloballyPaidException;
 import com.globallypaid.exception.InvalidRequestException;
 import com.globallypaid.http.BasicInterface;
 import com.globallypaid.http.Config;
+import com.globallypaid.http.ErrorMessage;
 import com.globallypaid.http.Method;
 import com.globallypaid.http.Request;
 import com.globallypaid.http.RequestOptions;
@@ -19,6 +20,7 @@ import com.globallypaid.model.RefundRequest;
 import com.globallypaid.model.RefundResponse;
 import com.globallypaid.model.TokenRequest;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -80,6 +82,9 @@ public class GloballyPaid extends BasicInterface {
             .build();
 
     Response response = this.api(request);
+    if (Objects.isNull(response) || Objects.isNull(response.getBody())) {
+      throw new InvalidRequestException(400, ErrorMessage.BAD_REQUEST.getLabel(), null, null);
+    }
     return PaymentInstrumentToken.builder()
         .build()
         .fromJson(response.getBody(), PaymentInstrumentToken.class);
@@ -109,9 +114,11 @@ public class GloballyPaid extends BasicInterface {
    */
   public ChargeResponse charge(ChargeRequest chargeRequest, RequestOptions requestOptions)
       throws IOException, GloballyPaidException {
-    if (!Optional.ofNullable(chargeRequest).isPresent() || chargeRequest.getSource().isEmpty()) {
+    if (!Optional.ofNullable(chargeRequest).isPresent()
+        || Objects.isNull(chargeRequest.getSource())
+        || chargeRequest.getSource().isEmpty()) {
       throw new InvalidRequestException(
-          HttpStatus.SC_BAD_REQUEST, "You must provide sharge source!", null, null);
+          HttpStatus.SC_BAD_REQUEST, "You must provide charge source!", null, null);
     }
 
     this.addHmacHeader(chargeRequest.toJson());
@@ -127,6 +134,9 @@ public class GloballyPaid extends BasicInterface {
             .build();
 
     Response response = this.api(request);
+    if (Objects.isNull(response) || Objects.isNull(response.getBody())) {
+      throw new InvalidRequestException(400, ErrorMessage.BAD_REQUEST.getLabel(), null, null);
+    }
     return ChargeResponse.builder().build().fromJson(response.getBody(), ChargeResponse.class);
   }
 
@@ -172,6 +182,9 @@ public class GloballyPaid extends BasicInterface {
             .build();
 
     Response response = this.api(request);
+    if (Objects.isNull(response) || Objects.isNull(response.getBody())) {
+      throw new InvalidRequestException(400, ErrorMessage.BAD_REQUEST.getLabel(), null, null);
+    }
     return CaptureResponse.builder().build().fromJson(response.getBody(), CaptureResponse.class);
   }
 
@@ -214,6 +227,9 @@ public class GloballyPaid extends BasicInterface {
             .build();
 
     Response response = this.api(request);
+    if (Objects.isNull(response) || Objects.isNull(response.getBody())) {
+      throw new InvalidRequestException(400, ErrorMessage.BAD_REQUEST.getLabel(), null, null);
+    }
     return RefundResponse.builder().build().fromJson(response.getBody(), RefundResponse.class);
   }
 }

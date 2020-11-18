@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.globallypaid.exception.AuthenticationException;
 import com.globallypaid.exception.GloballyPaidException;
+import com.globallypaid.exception.InvalidRequestException;
 import com.globallypaid.http.BasicInterface;
 import com.globallypaid.http.Config;
+import com.globallypaid.http.ErrorMessage;
 import com.globallypaid.http.Method;
 import com.globallypaid.http.Request;
 import com.globallypaid.http.RequestOptions;
@@ -15,6 +17,7 @@ import com.globallypaid.util.JsonUtils;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -105,7 +108,10 @@ public class Customer extends BasicInterface {
             .options(requestOptions)
             .build();
 
-    Response response = this.api(request);
+    Response response = api(request);
+    if (Objects.isNull(response) || Objects.isNull(response.getBody())) {
+      throw new InvalidRequestException(400, ErrorMessage.BAD_REQUEST.getLabel(), null, null);
+    }
     return Customer.builder().build().fromJson(response.getBody(), Customer.class);
   }
 
@@ -147,6 +153,9 @@ public class Customer extends BasicInterface {
             .build();
 
     Response response = this.api(request);
+    if (Objects.isNull(response) || Objects.isNull(response.getBody())) {
+      throw new InvalidRequestException(400, ErrorMessage.BAD_REQUEST.getLabel(), null, null);
+    }
     return Customer.builder().build().fromJson(response.getBody(), Customer.class);
   }
 
@@ -221,6 +230,9 @@ public class Customer extends BasicInterface {
             .build();
 
     Response response = this.api(request);
+    if (Objects.isNull(response) || Objects.isNull(response.getBody())) {
+      throw new InvalidRequestException(400, ErrorMessage.BAD_REQUEST.getLabel(), null, null);
+    }
     return (T) JsonUtils.convertFromJsonToList(response.getBody(), Customer.class);
   }
 
@@ -263,6 +275,9 @@ public class Customer extends BasicInterface {
             .build();
 
     Response response = this.api(request);
+    if (Objects.isNull(response) || Objects.isNull(response.getBody())) {
+      throw new InvalidRequestException(400, ErrorMessage.BAD_REQUEST.getLabel(), null, null);
+    }
 
     if (!TextUtils.isBlank(id)) {
       return (T) JsonUtils.convertFromJsonToObject(response.getBody(), Customer.class);

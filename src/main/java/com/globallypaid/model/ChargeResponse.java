@@ -22,7 +22,7 @@ public class ChargeResponse extends Entity {
   private String responseCode;
 
   private String message;
-  private String approved;
+  private boolean approved;
   private Integer amount;
 
   private String response;
