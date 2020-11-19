@@ -16,7 +16,6 @@ description('This Java module allows you to quickly and easily send charges thro
 
 repositories {
     mavenCentral()
-    mavenLocal()
 }
 
 sourceCompatibility = 1.8

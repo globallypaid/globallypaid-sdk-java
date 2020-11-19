@@ -14,7 +14,6 @@ import java.util.Objects;
 import org.apache.http.HttpStatus;
 import org.apache.http.util.TextUtils;
 
-
 import static com.globallypaid.util.Constants.API_BASE_URL;
 import static com.globallypaid.util.Constants.API_VERSION;
 import static com.globallypaid.util.Constants.HMAC_ALGORITHM_TYPE;
@@ -27,17 +26,17 @@ public abstract class BasicInterface extends Entity {
   public static final int DEFAULT_READ_TIMEOUT = 80 * 1000;
 
   /** The HTTP client. */
-  private Client client;
+  private final Client client;
 
   /** The API version. */
   private static String version;
 
   /** The request headers container. */
-  private Map<String, String> requestHeaders = new HashMap<>();
+  private final Map<String, String> requestHeaders = new HashMap<>();
 
-  private static volatile String apiKey;
-  private static volatile String appIdKey;
-  private static volatile String sharedSecretApiKey;
+  private static volatile String publishableApiKey;
+  private static volatile String appId;
+  private static volatile String sharedSecret;
   private static volatile String baseUrl = LIVE_BASE_URL;
 
   private static volatile int connectTimeout = -1;
@@ -67,15 +66,15 @@ public abstract class BasicInterface extends Entity {
    * @throws AuthenticationException In case of a bad defined secret API or APP keys
    */
   public static void initialize(Config config) throws AuthenticationException {
-    if (TextUtils.isBlank(config.getApiKey())
-        || TextUtils.isBlank(config.getAppIdKey())
-        || TextUtils.isBlank(config.getSharedSecretApiKey())) {
+    if (TextUtils.isBlank(config.getPublishableApiKey())
+        || TextUtils.isBlank(config.getAppId())
+        || TextUtils.isBlank(config.getSharedSecret())) {
       throw new AuthenticationException("Api and App keys must be defined!");
     }
 
-    apiKey = "Bearer ".concat(config.getApiKey());
-    appIdKey = config.getAppIdKey();
-    sharedSecretApiKey = config.getSharedSecretApiKey();
+    publishableApiKey = "Bearer ".concat(config.getPublishableApiKey());
+    appId = config.getAppId();
+    sharedSecret = config.getSharedSecret();
     sandbox =
         !TextUtils.isBlank(config.getSandbox())
             && "true".equalsIgnoreCase(config.getSandbox().trim());
@@ -156,31 +155,49 @@ public abstract class BasicInterface extends Entity {
   /**
    * Initialize the client with authorization header.
    *
+   * @param requestOptions the {@link RequestOptions} object to set per-request api key
    * @throws AuthenticationException In case of a bad defined API key
    */
-  public void addAuthHeader() throws AuthenticationException {
-    if (TextUtils.isBlank(apiKey)) {
-      throw new AuthenticationException("Api key must be defined!");
-    }
+  public void addAuthHeader(RequestOptions requestOptions) throws AuthenticationException {
+    if (Objects.nonNull(requestOptions)
+        && !TextUtils.isBlank(requestOptions.getPublishableApiKey())) {
+      this.requestHeaders.put("Authorization", requestOptions.getPublishableApiKey());
+    } else {
+      if (TextUtils.isBlank(publishableApiKey)) {
+        throw new AuthenticationException("Publishable Api key must be defined!");
+      }
 
-    this.requestHeaders.put("Authorization", apiKey);
+      this.requestHeaders.put("Authorization", publishableApiKey);
+    }
   }
 
   /**
    * Initialize the client with HMAC header.
    *
    * @param content The request content
+   * @param requestOptions The {@link RequestOptions} object
    * @throws InvalidRequestException In case of a problem during HMAC generation
    * @throws AuthenticationException In case of a bad defined secret API or APP keys
    */
-  public void addHmacHeader(String content)
+  public void addHmacHeader(String content, RequestOptions requestOptions)
       throws InvalidRequestException, AuthenticationException {
-    if (TextUtils.isBlank(appIdKey) || TextUtils.isBlank(sharedSecretApiKey)) {
-      throw new AuthenticationException("Api and App keys must be defined!");
+    if (Objects.nonNull(requestOptions)
+        && !TextUtils.isBlank(requestOptions.getAppId())
+        && !TextUtils.isBlank(requestOptions.getSharedSecret())) {
+      String hmac =
+          HmacUtils.createHmacHeader(
+              content,
+              requestOptions.getSharedSecret(),
+              requestOptions.getAppId(),
+              HMAC_ALGORITHM_TYPE);
+      this.requestHeaders.put(HMAC_HEADER, hmac);
+    } else {
+      if (TextUtils.isBlank(appId) || TextUtils.isBlank(sharedSecret)) {
+        throw new AuthenticationException("Api and App keys must be defined!");
+      }
+      String hmac = HmacUtils.createHmacHeader(content, sharedSecret, appId, HMAC_ALGORITHM_TYPE);
+      this.requestHeaders.put(HMAC_HEADER, hmac);
     }
-    String hmac =
-        HmacUtils.createHmacHeader(content, sharedSecretApiKey, appIdKey, HMAC_ALGORITHM_TYPE);
-    this.requestHeaders.put(HMAC_HEADER, hmac);
   }
 
   public Map<String, String> getRequestHeaders() {

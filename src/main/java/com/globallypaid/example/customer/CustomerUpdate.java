@@ -11,10 +11,10 @@ public class CustomerUpdate {
 
     new Customer(
         Config.builder()
-            .apiKey(System.getenv("GLOBALLYPAID_API_KEY"))
-            .appIdKey(System.getenv("GLOBALLYPAID_APP_ID_KEY"))
-            .sharedSecretApiKey(System.getenv("GLOBALLYPAID_SHARED_SECRET_API_KEY"))
-            .sandbox(System.getenv("GLOBALLYPAID_USE_SANDBOX"))
+            .publishableApiKey(System.getenv("PUBLISHABLE_API_KEY"))
+            .appId(System.getenv("APP_ID"))
+            .sharedSecret(System.getenv("SHARED_SECRET"))
+            .sandbox(System.getenv("USE_SANDBOX"))
             .build());
 
     try {
@@ -27,8 +27,11 @@ public class CustomerUpdate {
               .create();
       System.out.println("Created customer: " + createdCustomer);
 
-      createdCustomer.setLastName("Doe updated ".concat(uuid));
-      Customer updatedCustomer = createdCustomer.update(createdCustomer.getId());
+      Customer retrievedCustomer = Customer.builder().build().retrieve(createdCustomer.getId());
+      System.out.println("Retrieved customer: " + retrievedCustomer);
+
+      retrievedCustomer.setLastName("Doe updated ".concat(uuid));
+      Customer updatedCustomer = retrievedCustomer.update(retrievedCustomer.getId());
       System.out.println("Updated customer: " + updatedCustomer);
     } catch (GloballyPaidException e) {
       System.out.println(

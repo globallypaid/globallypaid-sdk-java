@@ -70,7 +70,7 @@ public class GloballyPaid extends BasicInterface {
    */
   public PaymentInstrumentToken token(TokenRequest tokenRequest, RequestOptions requestOptions)
       throws IOException, GloballyPaidException {
-    this.addAuthHeader();
+    this.addAuthHeader(requestOptions);
     Request request =
         Request.builder()
             .baseUri(getBaseUrl())
@@ -121,7 +121,7 @@ public class GloballyPaid extends BasicInterface {
           HttpStatus.SC_BAD_REQUEST, "You must provide charge source!", null, null);
     }
 
-    this.addHmacHeader(chargeRequest.toJson());
+    this.addHmacHeader(chargeRequest.toJson(), requestOptions);
     Request request =
         Request.builder()
             .baseUri(getBaseUrl())
@@ -169,7 +169,7 @@ public class GloballyPaid extends BasicInterface {
    */
   public CaptureResponse capture(CaptureRequest captureRequest, RequestOptions requestOptions)
       throws IOException, GloballyPaidException {
-    this.addHmacHeader(captureRequest.toJson());
+    this.addHmacHeader(captureRequest.toJson(), requestOptions);
     Request request =
         Request.builder()
             .baseUri(getBaseUrl())
@@ -214,7 +214,7 @@ public class GloballyPaid extends BasicInterface {
    */
   public RefundResponse refund(RefundRequest refundRequest, RequestOptions requestOptions)
       throws IOException, GloballyPaidException {
-    this.addHmacHeader(refundRequest.toJson());
+    this.addHmacHeader(refundRequest.toJson(), requestOptions);
     Request request =
         Request.builder()
             .baseUri(getBaseUrl())

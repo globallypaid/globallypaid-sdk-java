@@ -3,6 +3,7 @@ package com.globallypaid.example.paymentinstrument;
 import com.globallypaid.example.MockModel;
 import com.globallypaid.exception.GloballyPaidException;
 import com.globallypaid.http.Config;
+import com.globallypaid.http.RequestOptions;
 import com.globallypaid.model.ChargeRequest;
 import com.globallypaid.model.PaymentInstrumentToken;
 import com.globallypaid.service.Customer;
@@ -11,7 +12,7 @@ import com.globallypaid.service.PaymentInstrument;
 import java.io.IOException;
 import java.util.UUID;
 
-public class PaymentInstrumentCreateAndChargeSale {
+public class PaymentInstrumentCreateAndChargeSaleWithRequestOptions {
   public static void main(String[] args) throws IOException, GloballyPaidException {
 
     new PaymentInstrument(
@@ -28,41 +29,54 @@ public class PaymentInstrumentCreateAndChargeSale {
           Customer.builder().clientCustomerId("Jane Doe ".concat(uuid)).build().create();
       System.out.println("Created customer: " + customer);
 
-      // Success example
-      PaymentInstrumentToken paymentInstrumentToken =
+      PaymentInstrumentToken paymentInstrumentToken1 =
           PaymentInstrument.builder()
               .creditCard(MockModel.getCreditCard())
               .customerId(customer.getId())
               .billingContact(MockModel.getBillingContact())
               .build()
               .create(null);
-      System.out.println("Created PaymentInstrument: " + paymentInstrumentToken);
-
-      // Fail example
-      PaymentInstrumentToken paymentInstrumentToken1 =
-          PaymentInstrument.builder()
-              .creditCard(MockModel.getCreditCard())
-              //              .customerId(customer.getId())
-              .billingContact(MockModel.getBillingContactWithoutAddress())
-              .build()
-              .create(null);
       System.out.println("Created PaymentInstrument: " + paymentInstrumentToken1);
+
+      try {
+        RequestOptions requestOptions =
+            RequestOptions.builder()
+                .publishableApiKey("")
+                .appId("123641")
+                .sharedSecret("1452456465455648321564564561")
+                .build();
+        PaymentInstrumentToken paymentInstrumentToken =
+            PaymentInstrument.builder()
+                .creditCard(MockModel.getCreditCard())
+                .customerId(customer.getId())
+                .clientCustomerId("")
+                .billingContact(MockModel.getBillingContact())
+                .build()
+                .create(requestOptions);
+        System.out.println("Created PaymentInstrument: " + paymentInstrumentToken);
+      } catch (GloballyPaidException e) {
+        System.out.println(
+            "PaymentInstrument create ---> Code: "
+                + e.getCode()
+                + "\nMsg: "
+                + e.getMessage()
+                + "\nApi error: "
+                + e.getGloballyPaidError());
+      }
 
       ChargeRequest chargeRequest =
           ChargeRequest.builder()
-              .source(paymentInstrumentToken.getId())
-              .amount(303)
+              .source(paymentInstrumentToken1.getId())
+              .amount(304)
               .currencyCode("USD")
-              .clientCustomerId(uuid)
+              .clientCustomerId("54545121")
               .clientInvoiceId("123456")
               .clientTransactionId("154896575")
               .clientTransactionDescription("ChargeWithToken new Hmac - Test with charge false")
-              //              .capture(true)
               .savePaymentInstrument(false)
               .build();
       GloballyPaid globallyPaid = new GloballyPaid();
-      globallyPaid.charge(chargeRequest);
-
+      System.out.println("charge: " + globallyPaid.charge(chargeRequest));
     } catch (GloballyPaidException e) {
       System.out.println(
           "PaymentInstrument create ---> Code: "

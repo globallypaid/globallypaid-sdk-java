@@ -48,19 +48,19 @@ public class HmacUtils {
    * Create HMAC header.
    *
    * @param message message to sign with HMAC
-   * @param sharedSecretAPIKey shared secret key for HMAC signature
-   * @param appIdKey api id key
+   * @param sharedSecret shared secret key for HMAC signature
+   * @param appId api id key
    * @param algorithm algorithm used for signature, like SHA256
    * @return HMAC signature for header
    * @throws InvalidRequestException In case there is a problem during HMAC generation.
    */
   public static String createHmacHeader(
-      String message, String sharedSecretAPIKey, String appIdKey, String algorithm)
+      String message, String sharedSecret, String appId, String algorithm)
       throws InvalidRequestException {
     UUID guid = UUID.randomUUID();
-    String hashInBase64 = hmacDigest(message, sharedSecretAPIKey, algorithm);
+    String hashInBase64 = hmacDigest(message, sharedSecret, algorithm);
     String hmacHeader =
-        appIdKey.concat(":POST:").concat(guid.toString()).concat(":").concat(hashInBase64);
+        appId.concat(":POST:").concat(guid.toString()).concat(":").concat(hashInBase64);
     return Base64.getEncoder().encodeToString(hmacHeader.getBytes(StandardCharsets.US_ASCII));
   }
 }

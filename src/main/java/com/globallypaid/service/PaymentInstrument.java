@@ -104,7 +104,7 @@ public class PaymentInstrument extends BasicInterface {
   public PaymentInstrumentToken create(RequestOptions requestOptions)
       throws IOException, GloballyPaidException {
     String paymentInstrument = this.toJson();
-    this.addHmacHeader(paymentInstrument);
+    this.addHmacHeader(paymentInstrument, requestOptions);
     Request request =
         Request.builder()
             .baseUri(getBaseUrl())
@@ -150,7 +150,7 @@ public class PaymentInstrument extends BasicInterface {
     getRequestHeaders().clear();
     String endpoint = URI.create(PAYMENTINSTRUMENT_URL.concat(urlEncodeId(id))).toString();
     String paymentInstrument = this.toJson();
-    this.addHmacHeader(paymentInstrument);
+    this.addHmacHeader(paymentInstrument, requestOptions);
     Request request =
         Request.builder()
             .baseUri(getBaseUrl())
@@ -188,7 +188,7 @@ public class PaymentInstrument extends BasicInterface {
    * @throws GloballyPaidException In case of an API error
    */
   public void delete(String id, RequestOptions requestOptions) throws GloballyPaidException {
-    this.addHmacHeader("");
+    this.addHmacHeader("", requestOptions);
     String endpoint = URI.create(PAYMENTINSTRUMENT_URL.concat(urlEncodeId(id))).toString();
     Request request =
         Request.builder()
@@ -231,7 +231,7 @@ public class PaymentInstrument extends BasicInterface {
       String customerId, Map<String, String> queryParams, RequestOptions requestOptions)
       throws GloballyPaidException, IOException {
     getRequestHeaders().clear();
-    this.addAuthHeader();
+    this.addAuthHeader(requestOptions);
     String endpoint =
         URI.create(PAYMENTINSTRUMENT_URL.concat("list/").concat(urlEncodeId(customerId)))
             .toString();
@@ -278,7 +278,7 @@ public class PaymentInstrument extends BasicInterface {
   public <T> T retrieve(String id, RequestOptions requestOptions)
       throws GloballyPaidException, IOException {
     getRequestHeaders().clear();
-    this.addAuthHeader();
+    this.addAuthHeader(requestOptions);
     String endpoint = URI.create(PAYMENTINSTRUMENT_URL.concat(urlEncodeId(id))).toString();
     Request request =
         Request.builder()

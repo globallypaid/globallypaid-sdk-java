@@ -14,10 +14,10 @@ public class PaymentInstrumentCreate {
 
     new PaymentInstrument(
         Config.builder()
-            .apiKey(System.getenv("GLOBALLYPAID_API_KEY"))
-            .appIdKey(System.getenv("GLOBALLYPAID_APP_ID_KEY"))
-            .sharedSecretApiKey(System.getenv("GLOBALLYPAID_SHARED_SECRET_API_KEY"))
-            .sandbox(System.getenv("GLOBALLYPAID_USE_SANDBOX"))
+            .publishableApiKey(System.getenv("PUBLISHABLE_API_KEY"))
+            .appId(System.getenv("APP_ID"))
+            .sharedSecret(System.getenv("SHARED_SECRET"))
+            .sandbox(System.getenv("USE_SANDBOX"))
             .build());
 
     try {
@@ -31,9 +31,10 @@ public class PaymentInstrumentCreate {
           PaymentInstrument.builder()
               .creditCard(MockModel.getCreditCard())
               .customerId(customer.getId())
+              .clientCustomerId("")
               .billingContact(MockModel.getBillingContact())
               .build()
-              .create(null);
+              .create();
       System.out.println("Created PaymentInstrument: " + paymentInstrumentToken);
     } catch (GloballyPaidException e) {
       System.out.println(

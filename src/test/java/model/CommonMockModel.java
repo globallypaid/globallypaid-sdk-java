@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class CommonMockModel {
-  private static Faker faker = new Faker();
+  private static final Faker faker = new Faker();
 
   public static Address address() {
     return Address.builder()

@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 
 public class PaymentInstrumentMockModel {
 
-  private static Faker faker = new Faker();
+  private static final Faker faker = new Faker();
 
   public static PaymentInstrument paymentInstrument() {
     return PaymentInstrument.builder().build();

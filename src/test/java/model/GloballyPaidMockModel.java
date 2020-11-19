@@ -15,7 +15,7 @@ public class GloballyPaidMockModel {
 
   public static final String APPROVED = "Approved";
   public static final String RESPONSE_CODE = "00";
-  private static Faker faker = new Faker();
+  private static final Faker faker = new Faker();
 
   public static ChargeRequest getChargeRequestWithCaptureTrueAndClientInfo() {
     return ChargeRequest.builder()

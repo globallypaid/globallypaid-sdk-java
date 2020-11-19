@@ -9,17 +9,16 @@ import java.util.List;
 public class CustomersRetrieve {
   public static void main(String[] args) throws IOException, GloballyPaidException {
 
-    Customer customer =
-        new Customer(
-            Config.builder()
-                .apiKey(System.getenv("GLOBALLYPAID_API_KEY"))
-                .appIdKey(System.getenv("GLOBALLYPAID_APP_ID_KEY"))
-                .sharedSecretApiKey(System.getenv("GLOBALLYPAID_SHARED_SECRET_API_KEY"))
-                .sandbox(System.getenv("GLOBALLYPAID_USE_SANDBOX"))
-                .build());
+    new Customer(
+        Config.builder()
+            .publishableApiKey(System.getenv("PUBLISHABLE_API_KEY"))
+            .appId(System.getenv("APP_ID"))
+            .sharedSecret(System.getenv("SHARED_SECRET"))
+            .sandbox(System.getenv("USE_SANDBOX"))
+            .build());
 
     try {
-      List<Customer> customers = customer.list();
+      List<Customer> customers = Customer.builder().build().list();
       System.out.println("Retrieved customers: " + customers);
       customers.forEach(
           c -> System.out.println("Customer: " + c.getFirstName() + " " + c.getLastName()));

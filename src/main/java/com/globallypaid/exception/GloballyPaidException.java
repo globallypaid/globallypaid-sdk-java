@@ -16,7 +16,7 @@ public abstract class GloballyPaidException extends Exception {
   private Map<String, Object> globallyPaidError = new HashMap<>();
 
   private Integer code;
-  private String message;
+  private final String message;
 
   public GloballyPaidException(final Integer code, String message) {
     this.code = code;

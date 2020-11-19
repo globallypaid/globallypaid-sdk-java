@@ -97,7 +97,7 @@ public class Customer extends BasicInterface {
    */
   public Customer create(RequestOptions requestOptions) throws IOException, GloballyPaidException {
     String customer = this.toJson();
-    this.addHmacHeader(customer);
+    this.addHmacHeader(customer, requestOptions);
     Request request =
         Request.builder()
             .baseUri(getBaseUrl())
@@ -141,7 +141,7 @@ public class Customer extends BasicInterface {
     getRequestHeaders().clear();
     String endpoint = URI.create(CUSTOMER_URL.concat(SLASH).concat(urlEncodeId(id))).toString();
     String customer = this.toJson();
-    this.addHmacHeader(customer);
+    this.addHmacHeader(customer, requestOptions);
     Request request =
         Request.builder()
             .baseUri(getBaseUrl())
@@ -177,7 +177,7 @@ public class Customer extends BasicInterface {
    * @throws GloballyPaidException In case of an API error
    */
   public void delete(String id, RequestOptions requestOptions) throws GloballyPaidException {
-    this.addHmacHeader("");
+    this.addHmacHeader("", requestOptions);
     String endpoint = URI.create(CUSTOMER_URL.concat(SLASH).concat(urlEncodeId(id))).toString();
     Request request =
         Request.builder()
@@ -217,7 +217,7 @@ public class Customer extends BasicInterface {
   public <T> T list(Map<String, String> queryParams, RequestOptions requestOptions)
       throws GloballyPaidException, IOException {
     getRequestHeaders().clear();
-    this.addAuthHeader();
+    this.addAuthHeader(requestOptions);
     String endpoint = URI.create(CUSTOMER_URL).toString();
     Request request =
         Request.builder()
@@ -263,7 +263,7 @@ public class Customer extends BasicInterface {
   public <T> T retrieve(String id, RequestOptions requestOptions)
       throws GloballyPaidException, IOException {
     getRequestHeaders().clear();
-    this.addAuthHeader();
+    this.addAuthHeader(requestOptions);
     String endpoint = URI.create(CUSTOMER_URL.concat(SLASH).concat(urlEncodeId(id))).toString();
     Request request =
         Request.builder()

@@ -1,7 +1,7 @@
 # GloballyPaid Java SDK
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.globallypaid/globallypaid-java)](https://mvnrepository.com/artifact/com.globallypaid/globallypaid-java)
-[![JavaDoc](http://img.shields.io/badge/javadoc-reference-blue.svg)](https://globallypaid.com/developers/globallypaid-java)
+[![Maven Central](https://img.shields.io/maven-central/v/com.globallypaid/globallypaid-java.svg?label=Maven%20Central)](https://search.maven.org/artifact/com.globallypaid/globallypaid-java)
+[![JavaDoc](http://img.shields.io/badge/javadoc-reference-blue.svg)][javadoc]
 
 The official [GloballyPaid][globallypaid] Java library.
 
@@ -75,13 +75,13 @@ The following is the minimum needed code to make a charge sale transaction:
 <a name="env-variables"></a>
 ### Environment Variables
 
-`globallypaid-java` supports the GloballyPaid Api Key, App ID Key and Shared Secret Api Key 
+`globallypaid-java` supports the GloballyPaid Api Key, App ID and Shared Secret 
 values stored in the following environment variables:
 
-* `GLOBALLYPAID_SHARED_SECRET_API_KEY`
-* `GLOBALLYPAID_APP_ID_KEY`
-* `GLOBALLYPAID_API_KEY`
-* `GLOBALLYPAID_USE_SANDBOX`
+* `PUBLISHABLE_API_KEY`
+* `APP_ID`
+* `SHARED_SECRET`
+* `USE_SANDBOX`
 
 ### Setup Environment Variables
 
@@ -116,30 +116,46 @@ globallypaid_env.bat
 ```java
 GloballyPaid globallyPaid = new GloballyPaid(
           Config.builder()
-              .apiKey(System.getenv("GLOBALLYPAID_API_KEY"))
-              .appIdKey(System.getenv("GLOBALLYPAID_APP_ID_KEY"))
-              .sharedSecretApiKey(System.getenv("GLOBALLYPAID_SHARED_SECRET_API_KEY"))
-              .sandbox(System.getenv("GLOBALLYPAID_USE_SANDBOX"))             
+              .publishableApiKey(System.getenv("PUBLISHABLE_API_KEY"))
+              .appId(System.getenv("APP_ID"))
+              .sharedSecret(System.getenv("SHARED_SECRET"))
+              .sandbox(System.getenv("USE_SANDBOX")) // true if you need to test through GloballyPaid sandbox
               .build());
 ```
 or
 ```java
-// Find your API and APP Keys at globallypaid.com/...
-String apiKey = "pk_live_xxxxx";
-String appIdKey = "XXXXXXXX";
-String sharedSecretApiKey = "XXXXXXXX";
+String publishableApiKey = "pk_live_xxxxx";
+String appId = "Your APP ID";
+String sharedSecret = "Your Shared Secret";
 
 GloballyPaid globallyPaid = new GloballyPaid(
           Config.builder()
-              .apiKey(apiKey)
-              .appIdKey(appIdKey)
-              .sharedSecretApiKey(sharedSecretApiKey)              
+              .publishableApiKey(publishableApiKey)
+              .appId(appId)
+              .sharedSecret(sharedSecret)              
               .build());
 ```
 
 You can also change to sandbox with the following setting:
 ```java
 GloballyPaid.setSandbox(true);
+```
+
+##### Per-request configuration
+
+All SDK service methods accept an optional `RequestOptions` object, additionally allowing per-request configuration:
+```java
+RequestOptions requestOptions = RequestOptions.builder()
+            .appId("Your APP ID")
+            .sharedSecret("Your Shared Secret")
+            .build();
+
+Customer.builder().build().retrieve("customer_id_here", requestOptions);
+
+RequestOptions requestOptions = RequestOptions.builder()
+            .publishableApiKey("Your Publishable API Key").build();
+
+GloballyPaid.builder().build().token("token_request_here", requestOptions);
 ```
 
 <a name="timeouts"></a>
@@ -187,10 +203,10 @@ public class ChargeSaleTransaction {
       GloballyPaid globallyPaid =
           new GloballyPaid(
               Config.builder()
-                  .apiKey(System.getenv("GLOBALLYPAID_API_KEY"))
-                  .appIdKey(System.getenv("GLOBALLYPAID_APP_ID_KEY"))
-                  .sharedSecretApiKey(System.getenv("GLOBALLYPAID_SHARED_SECRET_API_KEY"))
-                  .sandbox(System.getenv("GLOBALLYPAID_USE_SANDBOX"))
+                  .publishableApiKey(System.getenv("PUBLISHABLE_API_KEY"))
+                  .appId(System.getenv("APP_ID"))
+                  .sharedSecret(System.getenv("SHARED_SECRET"))
+                  .sandbox(System.getenv("USE_SANDBOX"))
                   .build());
 
       ChargeRequest chargeRequest =
@@ -233,7 +249,6 @@ import com.globallypaid.http.RequestOptions;
 import com.globallypaid.model.ChargeRequest;
 import com.globallypaid.model.ChargeResponse;
 import com.globallypaid.model.PaymentInstrumentToken;
-import java.io.IOException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -247,10 +262,10 @@ public class ChargeService {
     GloballyPaid globallyPaid =
         new GloballyPaid(
             Config.builder()
-                .apiKey(System.getenv("GLOBALLYPAID_API_KEY"))
-                .appIdKey(System.getenv("GLOBALLYPAID_APP_ID_KEY"))
-                .sharedSecretApiKey(System.getenv("GLOBALLYPAID_SHARED_SECRET_API_KEY"))
-                .sandbox(System.getenv("GLOBALLYPAID_USE_SANDBOX"))
+                .publishableApiKey(System.getenv("PUBLISHABLE_API_KEY"))
+                .appId(System.getenv("APP_ID"))
+                .sharedSecret(System.getenv("SHARED_SECRET"))
+                .sandbox(System.getenv("USE_SANDBOX"))
                 .build());
 
     if (paymentInstrumentToken != null && !paymentInstrumentToken.getId().isEmpty()) {
@@ -289,7 +304,7 @@ go ahead and [open issues][java-sdk-open-issues] or [pull requests][java-sdk-pul
 
 [globallypaid]: https://globallypaid.com/
 [api-docs]: https://docs.globallypaid.com/?java
-[javadoc]: https://globallypaid.com/developers/globallypaid-java
+[javadoc]: https://www.javadoc.io/doc/com.globallypaid/globallypaid-java/latest/index.html
 [java-sdk-open-issues]: https://github.com/globallypaid/globallypaid-sdk-java/issues
 [java-sdk-pull-requests]: https://github.com/globallypaid/globallypaid-sdk-java/pulls
 [examples]: https://github.com/globallypaid/globallypaid-sdk-java/blob/master/src/main/java/com/globallypaid/example/

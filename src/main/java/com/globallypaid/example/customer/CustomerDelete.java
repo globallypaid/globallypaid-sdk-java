@@ -12,10 +12,10 @@ public class CustomerDelete {
     Customer customer =
         new Customer(
             Config.builder()
-                .apiKey(System.getenv("GLOBALLYPAID_API_KEY"))
-                .appIdKey(System.getenv("GLOBALLYPAID_APP_ID_KEY"))
-                .sharedSecretApiKey(System.getenv("GLOBALLYPAID_SHARED_SECRET_API_KEY"))
-                .sandbox(System.getenv("GLOBALLYPAID_USE_SANDBOX"))
+                .publishableApiKey(System.getenv("PUBLISHABLE_API_KEY"))
+                .appId(System.getenv("APP_ID"))
+                .sharedSecret(System.getenv("SHARED_SECRET"))
+                .sandbox(System.getenv("USE_SANDBOX"))
                 .build());
 
     try {
@@ -23,7 +23,7 @@ public class CustomerDelete {
       customer.setFirstName("Jane ".concat(UUID.randomUUID().toString()));
       Customer createdCustomer = customer.create();
       System.out.println("Created customer: " + createdCustomer);
-      customer.delete(createdCustomer.getId());
+      Customer.builder().build().delete(createdCustomer.getId());
 
       System.out.println("Retrieved customer: " + customer.retrieve(createdCustomer.getId()));
     } catch (GloballyPaidException e) {

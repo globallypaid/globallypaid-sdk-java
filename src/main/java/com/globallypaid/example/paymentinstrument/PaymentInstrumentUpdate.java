@@ -14,10 +14,10 @@ public class PaymentInstrumentUpdate {
 
     new PaymentInstrument(
         Config.builder()
-            .apiKey(System.getenv("GLOBALLYPAID_API_KEY"))
-            .appIdKey(System.getenv("GLOBALLYPAID_APP_ID_KEY"))
-            .sharedSecretApiKey(System.getenv("GLOBALLYPAID_SHARED_SECRET_API_KEY"))
-            .sandbox(System.getenv("GLOBALLYPAID_USE_SANDBOX"))
+            .publishableApiKey(System.getenv("PUBLISHABLE_API_KEY"))
+            .appId(System.getenv("APP_ID"))
+            .sharedSecret(System.getenv("SHARED_SECRET"))
+            .sandbox(System.getenv("USE_SANDBOX"))
             .build());
 
     try {
@@ -38,10 +38,10 @@ public class PaymentInstrumentUpdate {
       System.out.println("Created PaymentInstrument: " + paymentInstrumentToken);
 
       PaymentInstrumentToken retrievedPaymentInstrument =
-          paymentInstrument.retrieve(paymentInstrumentToken.getId());
+          PaymentInstrument.builder().build().retrieve(paymentInstrumentToken.getId());
       System.out.println("Retrieved PaymentInstrument: " + retrievedPaymentInstrument);
 
-      //      PaymentInstrument paymentInstrumentToUpdate =
+      //      PaymentInstrumentToken updatedPaymentInstrumentToken =
       //          PaymentInstrument.builder()
       //              .id(retrievedPaymentInstrument.getId())
       //              .clientCustomerId(retrievedPaymentInstrument.getClientCustomerId())
@@ -49,9 +49,8 @@ public class PaymentInstrumentUpdate {
       //              .customerId("123456")
       //              .billingContact(retrievedPaymentInstrument.getBillingContact())
       //              .clientId(retrievedPaymentInstrument.getClientId())
-      //              .build();
-      //      PaymentInstrumentToken updatedPaymentInstrumentToken =
-      //          paymentInstrumentToUpdate.update(retrievedPaymentInstrument.getId());
+      //              .build()
+      //              .update(retrievedPaymentInstrument.getId());
 
       paymentInstrument.setId(retrievedPaymentInstrument.getId());
       paymentInstrument.setClientCustomerId("456789");

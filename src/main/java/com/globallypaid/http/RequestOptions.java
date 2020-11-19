@@ -10,9 +10,12 @@ import lombok.EqualsAndHashCode;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class RequestOptions {
+
   private final int connectTimeout;
   private final int readTimeout;
-
+  private String publishableApiKey;
+  private String appId;
+  private String sharedSecret;
   private final int maxNetworkRetries;
 
   public static RequestOptions getDefault() {

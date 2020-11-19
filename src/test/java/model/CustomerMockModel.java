@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 public class CustomerMockModel {
 
-  private static Faker faker = new Faker();
+  private static final Faker faker = new Faker();
 
   public static Customer customer() {
     return Customer.builder()

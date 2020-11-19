@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class Config {
-  private String apiKey;
-  private String appIdKey;
-  private String sharedSecretApiKey;
+  private String publishableApiKey;
+  private String appId;
+  private String sharedSecret;
   private String sandbox;
 }
