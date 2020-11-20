@@ -1,6 +1,7 @@
 # GloballyPaid Java SDK
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.globallypaid/globallypaid-java.svg?label=Maven%20Central)](https://search.maven.org/artifact/com.globallypaid/globallypaid-java)
+[![Build Status](https://github.com/globallypaid/globallypaid-sdk-java/workflows/CI/badge.svg)](https://github.com/globallypaid/globallypaid-sdk-java/actions)
 [![JavaDoc](http://img.shields.io/badge/javadoc-reference-blue.svg)][javadoc]
 
 The official [GloballyPaid][globallypaid] Java library.
@@ -31,7 +32,7 @@ Add this dependency to your project's build file in the root:
 ...
 dependencies {
     ...
-    implementation "com.globallypaid:globallypaid-java:1.0.0"
+    implementation "com.globallypaid:globallypaid-java:1.0.1"
 }
 
 repositories {
@@ -48,7 +49,7 @@ Add this dependency to your project's POM:
 <dependency>
   <groupId>com.globallypaid</groupId>
   <artifactId>globallypaid-java</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 </dependency>
 ```
 
