@@ -21,5 +21,15 @@ jobs:
         run: chmod +x gradlew
       - name: Build with Gradle
         run: ./gradlew build
+      - name: Configure GPG Key
+        run: |
+          mkdir -p ~/.gnupg/
+          print "${GPG_SIGNING_KEY}" | base64 --decode > ~/.gnupg/private.key
+          gpg --import ~/.gnupg/private.key
+        env:
+          GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
       - name: Upload archives to Maven Central
         run: ./gradlew uploadArchives
+        env: 
+          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
