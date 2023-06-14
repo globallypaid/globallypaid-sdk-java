@@ -2,8 +2,8 @@ package model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.javafaker.Faker;
-import com.globallypaid.service.Customer;
-import com.globallypaid.util.JsonUtils;
+import com.deepstack.service.Customer;
+import com.deepstack.util.JsonUtils;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;

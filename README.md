@@ -32,7 +32,7 @@ Add this dependency to your project's build file in the root:
 ...
 dependencies {
     ...
-    implementation "com.globallypaid:globallypaid-java:1.0.1"
+    implementation "com.deepstack:globallypaid-java:1.0.1"
 }
 
 repositories {
@@ -47,7 +47,7 @@ Add this dependency to your project's POM:
 
 ```xml
 <dependency>
-  <groupId>com.globallypaid</groupId>
+  <groupId>com.deepstackcom.deepstack</groupId>
   <artifactId>globallypaid-java</artifactId>
   <version>1.0.1</version>
 </dependency>
@@ -115,7 +115,7 @@ globallypaid_env.bat
 
 ### Initialize the Client
 ```java
-GloballyPaid globallyPaid = new GloballyPaid(
+GloballyPaid deepStack = new GloballyPaid(
           Config.builder()
               .publishableApiKey(System.getenv("PUBLISHABLE_API_KEY"))
               .appId(System.getenv("APP_ID"))
@@ -129,7 +129,7 @@ String publishableApiKey = "pk_live_xxxxx";
 String appId = "Your APP ID";
 String sharedSecret = "Your Shared Secret";
 
-GloballyPaid globallyPaid = new GloballyPaid(
+GloballyPaid deepStack = new GloballyPaid(
           Config.builder()
               .publishableApiKey(publishableApiKey)
               .appId(appId)
@@ -189,19 +189,19 @@ servers.
 GloballyPaid Charge Sale Transaction example:
 
 ```java
-package com.globallypaid.example.payment;
+package com.deepstack.example.payment;
 
-import com.globallypaid.exception.GloballyPaidException;
-import com.globallypaid.http.Config;
-import com.globallypaid.model.ChargeRequest;
-import com.globallypaid.model.ChargeResponse;
-import com.globallypaid.service.GloballyPaid;
+import com.deepstack.exception.GloballyPaidException;
+import com.deepstack.http.Config;
+import com.deepstack.model.ChargeRequest;
+import com.deepstack.model.ChargeResponse;
+import com.deepstack.service.DeepStack;
 import java.io.IOException;
 
 public class ChargeSaleTransaction {
   public static void main(String[] args) throws IOException, GloballyPaidException {
     try {
-      GloballyPaid globallyPaid =
+      GloballyPaid deepStack =
           new GloballyPaid(
               Config.builder()
                   .publishableApiKey(System.getenv("PUBLISHABLE_API_KEY"))
@@ -223,7 +223,7 @@ public class ChargeSaleTransaction {
               .savePaymentInstrument(false)
               .build();
 
-      ChargeResponse chargeResponse = globallyPaid.charge(chargeRequest, null);
+      ChargeResponse chargeResponse = deepStack.charge(chargeRequest, null);
       System.out.println(chargeResponse);
     } catch (GloballyPaidException e) {
       System.out.println(
@@ -243,13 +243,14 @@ See the project's [examples][examples] for more examples.
 
 <a name="charge-trans-js-sdk"></a>
 ### Make a Charge Sale Transaction with Javascript SDK integration
+
 ```java
-import com.globallypaid.exception.GloballyPaidException;
-import com.globallypaid.http.Config;
-import com.globallypaid.http.RequestOptions;
-import com.globallypaid.model.ChargeRequest;
-import com.globallypaid.model.ChargeResponse;
-import com.globallypaid.model.PaymentInstrumentToken;
+import com.deepstack.exception.GloballyPaidException;
+import com.deepstack.http.Config;
+import com.deepstack.http.RequestOptions;
+import com.deepstack.model.ChargeRequest;
+import com.deepstack.model.ChargeResponse;
+import com.deepstack.model.PaymentInstrumentToken;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -260,7 +261,7 @@ public class ChargeService {
 
     ChargeResponse chargeResponse = null;
 
-    GloballyPaid globallyPaid =
+    GloballyPaid deepStack =
         new GloballyPaid(
             Config.builder()
                 .publishableApiKey(System.getenv("PUBLISHABLE_API_KEY"))
@@ -286,7 +287,7 @@ public class ChargeService {
               .savePaymentInstrument(false)
               .build();
 
-      chargeResponse = globallyPaid.charge(gpChargeRequest, requestOptions);
+      chargeResponse = deepStack.charge(gpChargeRequest, requestOptions);
       System.out.println(chargeResponse.toString());
     }
     return chargeResponse;

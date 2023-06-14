@@ -1,14 +1,14 @@
 package model;
 
 import com.github.javafaker.Faker;
-import com.globallypaid.http.Response;
-import com.globallypaid.model.Address;
-import com.globallypaid.model.BillingContact;
-import com.globallypaid.model.CreditCard;
-import com.globallypaid.model.Entity;
-import com.globallypaid.model.common.PaymentInstrumentCard;
-import com.globallypaid.service.PaymentInstrument;
-import com.globallypaid.util.JsonUtils;
+import com.deepstack.http.Response;
+import com.deepstack.model.Address;
+import com.deepstack.model.BillingContact;
+import com.deepstack.model.CreditCard;
+import com.deepstack.model.Entity;
+import com.deepstack.model.common.PaymentInstrumentCard;
+import com.deepstack.service.PaymentInstrument;
+import com.deepstack.util.JsonUtils;
 import java.io.IOException;
 import java.util.List;
 

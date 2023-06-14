@@ -1,11 +1,11 @@
 package model;
 
 import com.github.javafaker.Faker;
-import com.globallypaid.model.*;
-import com.globallypaid.model.common.PaymentSourceRawCard;
-import com.globallypaid.model.common.TransactionMeta;
-import com.globallypaid.model.common.TransactionParameters;
-import com.globallypaid.service.Customer;
+import com.deepstack.model.*;
+import com.deepstack.model.common.PaymentSourceRawCard;
+import com.deepstack.model.common.TransactionMeta;
+import com.deepstack.model.common.TransactionParameters;
+import com.deepstack.service.Customer;
 
 public class GloballyPaidMockModel {
 
