@@ -3,15 +3,14 @@ package com.globallypaid.example.payment;
 import com.globallypaid.exception.GloballyPaidException;
 import com.globallypaid.http.Config;
 import com.globallypaid.http.RequestOptions;
-import com.globallypaid.model.Address;
-import com.globallypaid.model.BillingContact;
-import com.globallypaid.model.ChargeRequest;
-import com.globallypaid.model.ChargeResponse;
-import com.globallypaid.model.CreditCard;
+import com.globallypaid.model.*;
 import com.globallypaid.model.PaymentInstrumentToken;
-import com.globallypaid.model.TokenRequest;
+import com.globallypaid.model.common.PaymentInstrumentCard;
+import com.globallypaid.model.common.PaymentSourceRawCard;
+import com.globallypaid.model.common.TransactionMeta;
+import com.globallypaid.model.common.TransactionParameters;
 import com.globallypaid.service.GloballyPaid;
-import com.globallypaid.service.PaymentInstrument;
+
 import java.io.IOException;
 
 public class ChargeSaleTransactionWithTokenization {
@@ -28,34 +27,33 @@ public class ChargeSaleTransactionWithTokenization {
 
       Address address =
           Address.builder()
-              .line1("Sun city St")
-              .city("NYC")
-              .state("NY")
-              .postalCode("12345")
-              .country("US")
+              .Line1("Sun city St")
+              .City("NYC")
+              .State("NY")
+              .PostalCode("12345")
+              .CountryCode("US")
               .build();
 
       BillingContact billingContact =
           BillingContact.builder()
-              .firstName("New Jane")
-              .lastName("Doe Tester")
-              .address(address)
-              .phone("614-340-0823")
-              .email("test@test.com")
+              .FirstName("New Jane")
+              .LastName("Doe Tester")
+              .Address(address)
+              .Phone("614-340-0823")
+              .Email("test@test.com")
               .build();
 
       CreditCard creditCard =
-          CreditCard.builder().number("4847182731147117").expiration("0627").cvv("361").build();
+          CreditCard.builder().Number("4847182731147117").Expiration("0627").CVV("361").build();
 
-      PaymentInstrument paymentInstrument =
-          PaymentInstrument.builder()
-              .type("creditcard")
-              .creditCard(creditCard)
-              .billingContact(billingContact)
+      PaymentInstrumentCard paymentInstrument =
+          PaymentInstrumentCard.builder()
+              .CreditCard(creditCard)
+              .BillingContact(billingContact)
               .build();
 
       TokenRequest tokenRequest =
-          TokenRequest.builder().paymentInstrument(paymentInstrument).build();
+          TokenRequest.builder().PaymentInstrumentRequest(paymentInstrument).build();
 
       RequestOptions requestOptions = RequestOptions.builder().connectTimeout(50 * 1000).build();
 
@@ -66,15 +64,21 @@ public class ChargeSaleTransactionWithTokenization {
 
         ChargeRequest chargeRequest =
             ChargeRequest.builder()
-                .source(paymentInstrumentToken.getId())
-                .amount(130)
-                .currencyCode("USD")
-                .clientCustomerId("4444687")
-                .clientInvoiceId("123456")
-                .clientTransactionId("154896575")
-                .clientTransactionDescription("ChargeWithToken new Hmac - Test")
-                .capture(true)
-                .savePaymentInstrument(false)
+                    .Source(PaymentSourceRawCard.builder()
+                            .CreditCard(CreditCard.builder().Number(paymentInstrumentToken.getId()).build())
+                            .build())
+                    .Params(TransactionParameters.builder()
+                            .Amount(130)
+                            .SavePaymentInstrument(false)
+                            .Capture(true)
+                            .CurrencyCode("USD")
+                            .build())
+                    .Meta(TransactionMeta.builder()
+                            .ClientCustomerID("4444687")
+                            .ClientInvoiceID("123456")
+                            .ClientTransactionDescription("ChargeWithToken new Hmac - Test")
+                            .ClientTransactionID("154896575")
+                            .build())
                 .build();
 
         ChargeResponse chargeResponse = GloballyPaid.builder().build().charge(chargeRequest);

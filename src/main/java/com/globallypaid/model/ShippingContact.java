@@ -5,22 +5,28 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.extern.jackson.Jacksonized;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Jacksonized
-@EqualsAndHashCode(callSuper = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CaptureRequest extends Entity {
+public class ShippingContact {
 
-  @JsonProperty(value = "charge")
-  private String Charge;
+    @JsonProperty(value = "first_name")
+    private String FirstName;
 
-  @JsonProperty(value = "amount")
-  private Integer Amount;
+    @JsonProperty(value = "last_name")
+    private String LastName;
+
+    @JsonProperty(value = "address")
+    private Address Address;
+
+    @JsonProperty(value = "phone")
+    private String Phone;
+
+    @JsonProperty(value = "email")
+    private String Email;
+
 }

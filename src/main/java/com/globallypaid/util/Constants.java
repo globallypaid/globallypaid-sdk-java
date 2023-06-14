@@ -8,6 +8,9 @@ public class Constants {
     public static final String SANDBOX_BASE_URL = "qa.api.globallypaid.com";
     public static final String LIVE_BASE_URL = "api.globallypaid.com";
     public static final String API_BASE_URL = "/api";
+    public static final String API_TRANSACTION_BASE = "/payments";
+
+    public static final String API_TOKEN_BASE = "/vault";
     public static final String VERSION = "/v";
     public static final String API_VERSION_NUMBER = "1";
     public static final String API_VERSION = VERSION.concat(API_VERSION_NUMBER);

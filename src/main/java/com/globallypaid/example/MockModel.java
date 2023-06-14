@@ -1,10 +1,12 @@
 package com.globallypaid.example;
 
-import com.globallypaid.model.Address;
-import com.globallypaid.model.BillingContact;
-import com.globallypaid.model.ChargeRequest;
-import com.globallypaid.model.CreditCard;
+import com.globallypaid.model.*;
 import com.globallypaid.model.PaymentInstrumentToken;
+//import com.globallypaid.model.common.PaymentSource;
+import com.globallypaid.model.common.PaymentInstrumentCard;
+import com.globallypaid.model.common.PaymentSourceRawCard;
+import com.globallypaid.model.common.TransactionMeta;
+import com.globallypaid.model.common.TransactionParameters;
 import com.globallypaid.service.PaymentInstrument;
 
 public class MockModel {
@@ -14,42 +16,42 @@ public class MockModel {
 
   public static Address getAddress() {
     return Address.builder()
-        .line1("Sun city St")
-        .city("NYC")
-        .state("NY")
-        .postalCode("12345")
-        .country("US")
+        .Line1("Sun city St")
+        .City("NYC")
+        .State("NY")
+        .PostalCode("12345")
+        .CountryCode("US")
         .build();
   }
 
   public static BillingContact getBillingContact() {
     return BillingContact.builder()
-        .firstName("New Jane")
-        .lastName("Doe Tester")
-        .address(getAddress())
-        .phone("614-340-0823")
-        .email("test@test.com")
+        .FirstName("New Jane")
+        .LastName("Doe Tester")
+        .Address(getAddress())
+        .Phone("614-340-0823")
+        .Email("test@test.com")
         .build();
   }
 
   public static BillingContact getBillingContactWithoutAddress() {
-    return BillingContact.builder().firstName("New Jane").lastName("Doe").build();
+    return BillingContact.builder().FirstName("New Jane").LastName("Doe").build();
   }
 
   public static BillingContact getBillingContactWithAddressNull() {
-    return BillingContact.builder().firstName("New Jane").lastName("Doe").address(null).build();
+    return BillingContact.builder().FirstName("New Jane").LastName("Doe").Address(null).build();
   }
 
   public static BillingContact getBillingContactWithAddressEmpty() {
     return BillingContact.builder()
-        .firstName("New Jane")
-        .lastName("Doe")
-        .address(Address.builder().build())
+        .FirstName("New Jane")
+        .LastName("Doe")
+        .Address(Address.builder().build())
         .build();
   }
 
   public static CreditCard getCreditCard() {
-    return CreditCard.builder().number("4847182731147117").expiration("0627").cvv("361").build();
+    return CreditCard.builder().Number("4847182731147117").Expiration("0627").CVV("361").build();
   }
 
   public static PaymentInstrument getPaymentInstrument(boolean withCardType) {
@@ -65,72 +67,110 @@ public class MockModel {
     return paymentInstrument;
   }
 
+  public static PaymentInstrumentCard getPaymentInstrumentCard(){
+    PaymentInstrumentCard paymentInstrumentCard =
+            PaymentInstrumentCard.builder()
+                    .CreditCard(getCreditCard())
+                    .BillingContact(getBillingContact())
+                    .build();
+    return paymentInstrumentCard;
+  }
+
   public static ChargeRequest getChargeRequestWithClientInfo(String paymentInstrumentId) {
+
     return ChargeRequest.builder()
-        .source(paymentInstrumentId)
-        .amount(130)
-        .currencyCode("USD")
-        .clientCustomerId("4444687")
-        .clientInvoiceId("123456")
-        .clientTransactionId("154896575")
-        .clientTransactionDescription("ChargeWithToken new Hmac - Test")
-        .capture(true)
-        .savePaymentInstrument(false)
+        .Source(PaymentSourceRawCard.builder()
+                    .CreditCard(CreditCard.builder().Number(paymentInstrumentId).build())
+                    .build())
+            .Params(TransactionParameters.builder()
+                    .Amount(130)
+                    .SavePaymentInstrument(false)
+                    .Capture(true)
+                    .CurrencyCode("USD")
+                    .build())
+            .Meta(TransactionMeta.builder()
+                    .ClientCustomerID("4444687")
+                    .ClientInvoiceID("123456")
+                    .ClientTransactionDescription("ChargeWithToken new Hmac - Test")
+                    .ClientTransactionID("154896575")
+                    .build())
         .build();
   }
 
   public static ChargeRequest getChargeRequestWithoutClientInfo(
       PaymentInstrumentToken paymentInstrumentToken) {
     return ChargeRequest.builder()
-        .source(paymentInstrumentToken.getId())
-        .amount(130)
-        .currencyCode("USD")
-        .capture(true)
-        .savePaymentInstrument(false)
+            .Source(PaymentSourceRawCard.builder()
+                    .CreditCard(CreditCard.builder().Number(paymentInstrumentToken.getId()).build())
+                    .build())
+            .Params(TransactionParameters.builder()
+                    .Amount(100)
+                    .SavePaymentInstrument(false)
+                    .Capture(true)
+                    .CurrencyCode("USD")
+                    .build())
         .build();
   }
 
   public static ChargeRequest getChargeRequestWithEmptyClientInfo(
       PaymentInstrumentToken paymentInstrumentToken) {
     return ChargeRequest.builder()
-        .source(paymentInstrumentToken.getId())
-        .amount(130)
-        .currencyCode("USD")
-        .clientCustomerId("")
-        .clientInvoiceId("")
-        .clientTransactionId("    ")
-        .clientTransactionDescription("    ")
-        .capture(true)
-        .savePaymentInstrument(false)
+            .Source(PaymentSourceRawCard.builder()
+                    .CreditCard(CreditCard.builder().Number(paymentInstrumentToken.getId()).build())
+                    .build())
+            .Params(TransactionParameters.builder()
+                    .Amount(100)
+                    .SavePaymentInstrument(false)
+                    .Capture(true)
+                    .CurrencyCode("USD")
+                    .build())
+            .Meta(TransactionMeta.builder()
+                    .ClientCustomerID("")
+                    .ClientInvoiceID("")
+                    .ClientTransactionDescription("")
+                    .ClientTransactionID("")
+                    .build())
         .build();
   }
 
   public static ChargeRequest getChargeRequestWithCaptureFalse(String paymentInstrumentId) {
     return ChargeRequest.builder()
-        .source(paymentInstrumentId)
-        .amount(110)
-        .capture(false)
-        .clientCustomerId("4444687")
-        .currencyCode("USD")
-        .clientInvoiceId("123456")
-        .clientTransactionId("154896575")
-        .clientTransactionDescription("ChargeWithToken new Hmac - Test")
-        .savePaymentInstrument(false)
+            .Source(PaymentSourceRawCard.builder()
+                    .CreditCard(CreditCard.builder().Number(paymentInstrumentId).build())
+                    .build())
+            .Params(TransactionParameters.builder()
+                    .Amount(100)
+                    .SavePaymentInstrument(false)
+                    .Capture(false)
+                    .CurrencyCode("USD")
+                    .build())
+            .Meta(TransactionMeta.builder()
+                    .ClientCustomerID("4444687")
+                    .ClientInvoiceID("123456")
+                    .ClientTransactionDescription("ChargeWithToken new Hmac - Test")
+                    .ClientTransactionID("154896575")
+                    .build())
         .build();
   }
 
   public static ChargeRequest getChargeRequestWithCaptureTrueAndPaymentInstrument(
       PaymentInstrumentToken paymentInstrumentToken) {
     return ChargeRequest.builder()
-        .source(paymentInstrumentToken.getId())
-        .amount(130)
-        .currencyCode("USD")
-        .clientCustomerId("4444687")
-        .clientInvoiceId("123456")
-        .clientTransactionId("154896575")
-        .clientTransactionDescription("ChargeWithToken new Hmac - Test")
-        .capture(true)
-        .savePaymentInstrument(true)
+            .Source(PaymentSourceRawCard.builder()
+                    .CreditCard(CreditCard.builder().Number(paymentInstrumentToken.getId()).build())
+                    .build())
+            .Params(TransactionParameters.builder()
+                    .Amount(100)
+                    .SavePaymentInstrument(true)
+                    .Capture(true)
+                    .CurrencyCode("USD")
+                    .build())
+            .Meta(TransactionMeta.builder()
+                    .ClientCustomerID("4444687")
+                    .ClientInvoiceID("123456")
+                    .ClientTransactionDescription("ChargeWithToken new Hmac - Test")
+                    .ClientTransactionID("154896575")
+                    .build())
         .build();
   }
 }

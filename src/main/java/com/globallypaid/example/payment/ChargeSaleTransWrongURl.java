@@ -8,8 +8,9 @@ import com.globallypaid.http.RequestOptions;
 import com.globallypaid.model.ChargeResponse;
 import com.globallypaid.model.PaymentInstrumentToken;
 import com.globallypaid.model.TokenRequest;
+import com.globallypaid.model.common.PaymentInstrumentCard;
 import com.globallypaid.service.GloballyPaid;
-import com.globallypaid.service.PaymentInstrument;
+
 import java.io.IOException;
 import java.time.Instant;
 
@@ -24,14 +25,13 @@ public class ChargeSaleTransWrongURl {
                 .sandbox(System.getenv("USE_SANDBOX"))
                 .build());
 
-    PaymentInstrument paymentInstrument =
-        PaymentInstrument.builder()
-            .type("creditcard")
-            .creditCard(MockModel.getCreditCard())
-            .billingContact(MockModel.getBillingContact())
+    PaymentInstrumentCard paymentInstrument =
+        PaymentInstrumentCard.builder()
+            .CreditCard(MockModel.getCreditCard())
+            .BillingContact(MockModel.getBillingContact())
             .build();
 
-    TokenRequest tokenRequest = TokenRequest.builder().paymentInstrument(paymentInstrument).build();
+    TokenRequest tokenRequest = TokenRequest.builder().PaymentInstrumentRequest(paymentInstrument).build();
 
     // set wrong URI
     BasicInterface.setSandbox(false);

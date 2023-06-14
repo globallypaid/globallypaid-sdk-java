@@ -13,13 +13,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BillingContact {
-  @JsonProperty("first_name")
-  private String firstName;
+  @JsonProperty(value = "first_name")
+  private String FirstName;
 
-  @JsonProperty("last_name")
-  private String lastName;
+  @JsonProperty(value = "last_name")
+  private String LastName;
 
-  private Address address;
-  private String phone;
-  private String email;
+  @JsonProperty(value = "address")
+  private Address Address;
+
+  @JsonProperty(value = "phone")
+  private String Phone;
+
+  @JsonProperty(value = "email")
+  private String Email;
 }

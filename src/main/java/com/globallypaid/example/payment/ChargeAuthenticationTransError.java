@@ -8,8 +8,9 @@ import com.globallypaid.model.CaptureResponse;
 import com.globallypaid.model.ChargeResponse;
 import com.globallypaid.model.PaymentInstrumentToken;
 import com.globallypaid.model.TokenRequest;
+import com.globallypaid.model.common.PaymentInstrumentCard;
 import com.globallypaid.service.GloballyPaid;
-import com.globallypaid.service.PaymentInstrument;
+
 import java.io.IOException;
 
 public class ChargeAuthenticationTransError {
@@ -24,14 +25,13 @@ public class ChargeAuthenticationTransError {
                 .sandbox(System.getenv("USE_SANDBOX"))
                 .build());
 
-    PaymentInstrument paymentInstrument =
-        PaymentInstrument.builder()
-            .type("creditcard")
-            .creditCard(MockModel.getCreditCard())
-            .billingContact(MockModel.getBillingContact())
+    PaymentInstrumentCard paymentInstrument =
+        PaymentInstrumentCard.builder()
+            .CreditCard(MockModel.getCreditCard())
+            .BillingContact(MockModel.getBillingContact())
             .build();
 
-    TokenRequest tokenRequest = TokenRequest.builder().paymentInstrument(paymentInstrument).build();
+    TokenRequest tokenRequest = TokenRequest.builder().PaymentInstrumentRequest(paymentInstrument).build();
 
     PaymentInstrumentToken paymentInstrumentToken = null;
     try {
@@ -52,22 +52,22 @@ public class ChargeAuthenticationTransError {
           globallyPaid.charge(
               MockModel.getChargeRequestWithCaptureFalse(paymentInstrumentToken.getId()));
 
-      if (chargeResponse != null && !chargeResponse.getId().isEmpty()) {
+      if (chargeResponse != null && !chargeResponse.getID().isEmpty()) {
         System.out.println(chargeResponse.toString());
         // call capture
         CaptureResponse captureResponse1 =
             globallyPaid.capture(
                 CaptureRequest.builder()
-                    .charge(chargeResponse.getId())
-                    .amount(chargeResponse.getAmount())
+                    .Charge(chargeResponse.getID())
+                    .Amount(chargeResponse.getAmount())
                     .build());
         System.out.println("First capture call: " + captureResponse1);
 
         CaptureResponse captureResponse2 =
             globallyPaid.capture(
                 CaptureRequest.builder()
-                    .charge(chargeResponse.getId())
-                    .amount(chargeResponse.getAmount())
+                    .Charge(chargeResponse.getID())
+                    .Amount(chargeResponse.getAmount())
                     .build());
         System.out.println("Second capture call: " + captureResponse2);
       }

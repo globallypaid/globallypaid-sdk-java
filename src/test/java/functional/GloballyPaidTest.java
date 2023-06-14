@@ -10,14 +10,8 @@ import com.globallypaid.exception.NotAllowedException;
 import com.globallypaid.exception.RateLimitException;
 import com.globallypaid.http.ErrorMessage;
 import com.globallypaid.http.Response;
-import com.globallypaid.model.CaptureRequest;
-import com.globallypaid.model.CaptureResponse;
-import com.globallypaid.model.ChargeRequest;
-import com.globallypaid.model.ChargeResponse;
+import com.globallypaid.model.*;
 import com.globallypaid.model.PaymentInstrumentToken;
-import com.globallypaid.model.RefundRequest;
-import com.globallypaid.model.RefundResponse;
-import com.globallypaid.model.TokenRequest;
 import com.globallypaid.service.GloballyPaid;
 import java.io.IOException;
 import java.util.Objects;
@@ -45,7 +39,7 @@ public class GloballyPaidTest {
         GloballyPaidMockModel.getChargeRequestWithCaptureTrueAndClientInfo();
 
     ChargeResponse expectedChargeResponse =
-        GloballyPaidMockModel.chargeResponseForCaptureTrueAndClientInfo(chargeRequest.getAmount());
+        GloballyPaidMockModel.chargeResponseForCaptureTrueAndClientInfo(chargeRequest.getParams().getAmount());
     Response expectedResponse = CommonMockModel.response200WithCode00(expectedChargeResponse);
 
     lenient().when(globallyPaid.api(any())).thenReturn(expectedResponse);
@@ -55,7 +49,7 @@ public class GloballyPaidTest {
     ChargeResponse actualResponse = globallyPaid.charge(chargeRequest);
 
     assertTrue(Objects.nonNull(actualResponse));
-    assertEquals(expectedChargeResponse.getId(), actualResponse.getId());
+    assertEquals(expectedChargeResponse.getID(), actualResponse.getID());
   }
 
   @Test
@@ -608,7 +602,7 @@ public class GloballyPaidTest {
         GloballyPaidMockModel.paymentInstrumentToken(tokenRequest);
     Response expectedResponse = CommonMockModel.response200WithCode00(expectedTokenResponse);
 
-    lenient().when(globallyPaid.api(any())).thenReturn(expectedResponse);
+    lenient().when(globallyPaid.tokenapi(any())).thenReturn(expectedResponse);
     lenient().when(globallyPaid.token(any())).thenCallRealMethod();
     lenient().when(globallyPaid.token(any(), any())).thenCallRealMethod();
 
@@ -644,7 +638,7 @@ public class GloballyPaidTest {
   public void testTokenizeFailWith404() throws GloballyPaidException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     lenient()
-        .when(globallyPaid.api(any()))
+        .when(globallyPaid.tokenapi(any()))
         .thenThrow(new InvalidRequestException(404, ErrorMessage.NOT_FOUND.getLabel(), null, null));
     lenient().when(globallyPaid.token(any())).thenCallRealMethod();
     lenient().when(globallyPaid.token(any(), any())).thenCallRealMethod();
@@ -660,7 +654,7 @@ public class GloballyPaidTest {
   public void testTokenizeFailWith401() throws GloballyPaidException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     lenient()
-        .when(globallyPaid.api(any()))
+        .when(globallyPaid.tokenapi(any()))
         .thenThrow(new AuthenticationException(401, ErrorMessage.UNAUTHORIZED.getLabel()));
     lenient().when(globallyPaid.token(any())).thenCallRealMethod();
     lenient().when(globallyPaid.token(any(), any())).thenCallRealMethod();
@@ -676,7 +670,7 @@ public class GloballyPaidTest {
   public void testTokenizeFailWith403() throws GloballyPaidException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     lenient()
-        .when(globallyPaid.api(any()))
+        .when(globallyPaid.tokenapi(any()))
         .thenThrow(new ForbiddenException(403, ErrorMessage.FORBIDDEN.getLabel(), null));
     lenient().when(globallyPaid.token(any())).thenCallRealMethod();
     lenient().when(globallyPaid.token(any(), any())).thenCallRealMethod();
@@ -692,7 +686,7 @@ public class GloballyPaidTest {
   public void testTokenizeFailWith405() throws GloballyPaidException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     lenient()
-        .when(globallyPaid.api(any()))
+        .when(globallyPaid.tokenapi(any()))
         .thenThrow(new NotAllowedException(405, ErrorMessage.METHOD_NOT_ALLOWED.getLabel()));
     lenient().when(globallyPaid.token(any())).thenCallRealMethod();
     lenient().when(globallyPaid.token(any(), any())).thenCallRealMethod();
@@ -708,7 +702,7 @@ public class GloballyPaidTest {
   public void testTokenizeFailWith406() throws GloballyPaidException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     lenient()
-        .when(globallyPaid.api(any()))
+        .when(globallyPaid.tokenapi(any()))
         .thenThrow(new NotAcceptableException(406, ErrorMessage.NOT_ACCEPTABLE.getLabel()));
     lenient().when(globallyPaid.token(any())).thenCallRealMethod();
     lenient().when(globallyPaid.token(any(), any())).thenCallRealMethod();
@@ -724,7 +718,7 @@ public class GloballyPaidTest {
   public void testTokenizeFailWith410() throws GloballyPaidException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     lenient()
-        .when(globallyPaid.api(any()))
+        .when(globallyPaid.tokenapi(any()))
         .thenThrow(new ApiException(410, ErrorMessage.GONE.getLabel(), null));
     lenient().when(globallyPaid.token(any())).thenCallRealMethod();
     lenient().when(globallyPaid.token(any(), any())).thenCallRealMethod();
@@ -740,7 +734,7 @@ public class GloballyPaidTest {
   public void testTokenizeFailWith429() throws GloballyPaidException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     lenient()
-        .when(globallyPaid.api(any()))
+        .when(globallyPaid.tokenapi(any()))
         .thenThrow(new RateLimitException(429, ErrorMessage.RATE_LIMIT_EXCEEDED.getLabel(), null));
     lenient().when(globallyPaid.token(any())).thenCallRealMethod();
     lenient().when(globallyPaid.token(any(), any())).thenCallRealMethod();
@@ -756,7 +750,7 @@ public class GloballyPaidTest {
   public void testTokenizeFailWith503() throws GloballyPaidException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     lenient()
-        .when(globallyPaid.api(any()))
+        .when(globallyPaid.tokenapi(any()))
         .thenThrow(new ApiException(503, ErrorMessage.SERVICE_UNAVAILABLE.getLabel(), null));
     lenient().when(globallyPaid.token(any())).thenCallRealMethod();
     lenient().when(globallyPaid.token(any(), any())).thenCallRealMethod();
@@ -772,7 +766,7 @@ public class GloballyPaidTest {
   public void testTokenizeFailWith500() throws GloballyPaidException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     lenient()
-        .when(globallyPaid.api(any()))
+        .when(globallyPaid.tokenapi(any()))
         .thenThrow(new ApiException(500, ErrorMessage.INTERNAL_SERVER_ERROR.getLabel(), null));
     lenient().when(globallyPaid.token(any())).thenCallRealMethod();
     lenient().when(globallyPaid.token(any(), any())).thenCallRealMethod();

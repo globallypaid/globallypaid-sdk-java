@@ -22,7 +22,7 @@ public class ChargeSaleTransWithRequestOptions {
                 .build());
 
     TokenRequest tokenRequest =
-        TokenRequest.builder().paymentInstrument(MockModel.getPaymentInstrument(true)).build();
+        TokenRequest.builder().PaymentInstrumentRequest(MockModel.getPaymentInstrumentCard()).build();
 
     try {
       RequestOptions requestOptions =

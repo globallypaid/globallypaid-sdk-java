@@ -14,12 +14,7 @@ import java.util.Objects;
 import org.apache.http.HttpStatus;
 import org.apache.http.util.TextUtils;
 
-import static com.globallypaid.util.Constants.API_BASE_URL;
-import static com.globallypaid.util.Constants.API_VERSION;
-import static com.globallypaid.util.Constants.HMAC_ALGORITHM_TYPE;
-import static com.globallypaid.util.Constants.HMAC_HEADER;
-import static com.globallypaid.util.Constants.LIVE_BASE_URL;
-import static com.globallypaid.util.Constants.SANDBOX_BASE_URL;
+import static com.globallypaid.util.Constants.*;
 
 public abstract class BasicInterface extends Entity {
   public static final int DEFAULT_CONNECT_TIMEOUT = 30 * 1000;
@@ -204,6 +199,10 @@ public abstract class BasicInterface extends Entity {
     return requestHeaders;
   }
 
+  public void clearRequestHeaders(){
+    requestHeaders.clear();
+  }
+
   public String getBaseUrl() {
     return baseUrl;
   }
@@ -220,7 +219,34 @@ public abstract class BasicInterface extends Entity {
 
     req.setMethod(request.getMethod());
     req.setBaseUri(request.getBaseUri());
-    req.setEndpoint(API_BASE_URL.concat(version).concat(request.getEndpoint()));
+    // This needs to be done in each request since ex: token uses a different base
+    req.setEndpoint(API_BASE_URL.concat(version).concat(API_TRANSACTION_BASE).concat(request.getEndpoint()));
+    req.setBody(request.getBody());
+    req.setOptions(request.getOptions());
+    req.setNonZeroCheck(request.isNonZeroCheck());
+
+    if (!Objects.isNull(this.getRequestHeaders()) && !this.getRequestHeaders().isEmpty()) {
+      for (final Map.Entry<String, String> header : this.requestHeaders.entrySet()) {
+        req.addHeader(header.getKey(), header.getValue());
+      }
+    }
+
+    if (!Objects.isNull(request.getQueryParams()) && !request.getQueryParams().isEmpty()) {
+      for (final Map.Entry<String, String> queryParam : request.getQueryParams().entrySet()) {
+        req.addQueryParam(queryParam.getKey(), queryParam.getValue());
+      }
+    }
+
+    return makeApiCall(req);
+  }
+
+  public Response tokenapi(final Request request) throws GloballyPaidException {
+    final Request req = new Request();
+
+    req.setMethod(request.getMethod());
+    req.setBaseUri(request.getBaseUri());
+    // This needs to be done in each request since ex: token uses a different base
+    req.setEndpoint(API_BASE_URL.concat(version).concat(API_TOKEN_BASE).concat(request.getEndpoint()));
     req.setBody(request.getBody());
     req.setOptions(request.getOptions());
     req.setNonZeroCheck(request.isNonZeroCheck());

@@ -5,7 +5,11 @@ import com.globallypaid.exception.GloballyPaidException;
 import com.globallypaid.http.Config;
 import com.globallypaid.http.RequestOptions;
 import com.globallypaid.model.ChargeRequest;
+import com.globallypaid.model.CreditCard;
 import com.globallypaid.model.PaymentInstrumentToken;
+import com.globallypaid.model.common.PaymentSourceRawCard;
+import com.globallypaid.model.common.TransactionMeta;
+import com.globallypaid.model.common.TransactionParameters;
 import com.globallypaid.service.Customer;
 import com.globallypaid.service.GloballyPaid;
 import com.globallypaid.service.PaymentInstrument;
@@ -67,14 +71,21 @@ public class PaymentInstrumentCreateAndChargeSaleWithRequestOptions {
 
             ChargeRequest chargeRequest =
                     ChargeRequest.builder()
-                            .source(paymentInstrumentToken1.getId())
-                            .amount(304)
-                            .currencyCode("USD")
-                            .clientCustomerId("54545121")
-                            .clientInvoiceId("123456")
-                            .clientTransactionId("154896575")
-                            .clientTransactionDescription("ChargeWithToken new Hmac - Test with charge false")
-                            .savePaymentInstrument(false)
+                            .Source(PaymentSourceRawCard.builder()
+                                    .CreditCard(CreditCard.builder().Number(paymentInstrumentToken1.getId()).build())
+                                    .build())
+                            .Params(TransactionParameters.builder()
+                                    .Amount(130)
+                                    .SavePaymentInstrument(false)
+                                    .Capture(true)
+                                    .CurrencyCode("USD")
+                                    .build())
+                            .Meta(TransactionMeta.builder()
+                                    .ClientCustomerID("4444687")
+                                    .ClientInvoiceID("123456")
+                                    .ClientTransactionDescription("ChargeWithToken new Hmac - Test")
+                                    .ClientTransactionID("154896575")
+                                    .build())
                             .build();
             GloballyPaid globallyPaid = new GloballyPaid();
             System.out.println("charge: " + globallyPaid.charge(chargeRequest));

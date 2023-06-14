@@ -1,13 +1,17 @@
 package com.globallypaid.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.globallypaid.enums.PaymentSourceType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+
+//Object returned from the JS SDK that is sent to merchant servers
 @Data
 @Builder
 @AllArgsConstructor
@@ -15,30 +19,86 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PaymentInstrumentToken extends Entity {
-  private String id;
-  private String type;
-  private String brand;
+
+  @JsonProperty(value = "id")
+  private String Id;
+
+  @JsonProperty(value = "type")
+  private PaymentSourceType Type;
+
+  @JsonProperty(value = "brand")
+  private String Brand;
+
+  @JsonProperty(value = "bin")
+  private String Bin;
 
   @JsonProperty("last_four")
-  private String lastFour;
+  private String LastFour;
 
-  private String expiration;
+  // Company setting if raw pan is returned from the jsSDK
+  @JsonProperty(value = "pan")
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  private String PAN;
+
+  @JsonProperty(value = "expiration")
+  private String Expiration;
+
+  // card cvv (returned from the js SDK but not direct api calls)
+  @JsonProperty(value = "cvv")
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  private String CVV;
 
   @JsonProperty("billing_contact")
-  private BillingContact billingContact;
+  private BillingContact BillingContact;
 
   @JsonProperty("customer_id")
-  private String customerId;
+  private String CustomerId;
+
+  @JsonProperty(value = "is_default")
+  private boolean IsDefault;
 
   @JsonProperty("client_customer_id")
-  private String clientCustomerId;
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  private String ClientCustomerId;
 
   @JsonProperty("client_id")
-  private String clientId;
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  private String ClientId;
 
   @JsonProperty("created")
-  private String created;
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  private String Created;
 
   @JsonProperty("updated")
-  private String updated;
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  private String Updated;
+
+  @JsonProperty(value = "kount_session_id")
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  private String KountSessionId;
+
+  @JsonProperty(value = "v1_legacy_token")
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  private String V1LegacyToken;
+
+  @JsonProperty(value = "token_ex_token")
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  private String TokenExToken;
+
+  // TODO update to object
+  @JsonProperty(value = "cmpi_lookup_response")
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  private String CardinalMPI;
+
+  @JsonProperty(value = "cavv")
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  private String CAVV;
+
+  @JsonProperty(value = "eciflag")
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  private String ECIFlag;
+
+  @JsonProperty(value = "xid")
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  private String XID;
 }

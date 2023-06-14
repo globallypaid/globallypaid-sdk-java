@@ -25,7 +25,7 @@ public class ChargeSaleTransWithoutClientInfo {
     PaymentInstrumentToken paymentInstrumentToken = null;
     try {
       TokenRequest tokenRequest =
-          TokenRequest.builder().paymentInstrument(MockModel.getPaymentInstrument(false)).build();
+          TokenRequest.builder().PaymentInstrumentRequest(MockModel.getPaymentInstrumentCard()).build();
       RequestOptions requestOptions = RequestOptions.builder().connectTimeout(50 * 1000).build();
       paymentInstrumentToken = globallyPaid.token(tokenRequest, requestOptions);
     } catch (GloballyPaidException e) {

@@ -8,8 +8,9 @@ import com.globallypaid.model.ChargeRequest;
 import com.globallypaid.model.ChargeResponse;
 import com.globallypaid.model.PaymentInstrumentToken;
 import com.globallypaid.model.TokenRequest;
+import com.globallypaid.model.common.PaymentInstrumentCard;
 import com.globallypaid.service.GloballyPaid;
-import com.globallypaid.service.PaymentInstrument;
+
 import java.io.IOException;
 import org.apache.http.util.TextUtils;
 
@@ -25,14 +26,13 @@ public class ChargeWithPaymentInstrumentTrans {
                 .sandbox(System.getenv("USE_SANDBOX"))
                 .build());
 
-    PaymentInstrument paymentInstrument =
-        PaymentInstrument.builder()
-            .type("creditcard")
-            .creditCard(MockModel.getCreditCard())
-            .billingContact(MockModel.getBillingContact())
+    PaymentInstrumentCard paymentInstrument =
+        PaymentInstrumentCard.builder()
+            .CreditCard(MockModel.getCreditCard())
+            .BillingContact(MockModel.getBillingContact())
             .build();
 
-    TokenRequest tokenRequest = TokenRequest.builder().paymentInstrument(paymentInstrument).build();
+    TokenRequest tokenRequest = TokenRequest.builder().PaymentInstrumentRequest(paymentInstrument).build();
 
     PaymentInstrumentToken paymentInstrumentToken = null;
     try {
@@ -53,7 +53,7 @@ public class ChargeWithPaymentInstrumentTrans {
         ChargeResponse chargeResponse =
             globallyPaid.charge(
                 MockModel.getChargeRequestWithCaptureTrueAndPaymentInstrument(
-                    paymentInstrumentToken));
+                        paymentInstrumentToken));
         System.out.println(chargeResponse.toString());
 
         if (chargeResponse.getPaymentInstrument() != null
@@ -61,7 +61,7 @@ public class ChargeWithPaymentInstrumentTrans {
           ChargeRequest chargeWithPaymentInstrument =
               MockModel.getChargeRequestWithClientInfo(
                   chargeResponse.getPaymentInstrument().getId());
-          chargeWithPaymentInstrument.setAmount(150);
+          chargeWithPaymentInstrument.getParams().setAmount(150);
 
           try {
             ChargeResponse chargeResponseWithPI = globallyPaid.charge(chargeWithPaymentInstrument);

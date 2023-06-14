@@ -6,6 +6,7 @@ import com.globallypaid.model.Address;
 import com.globallypaid.model.BillingContact;
 import com.globallypaid.model.CreditCard;
 import com.globallypaid.model.Entity;
+import com.globallypaid.model.common.PaymentInstrumentCard;
 import com.globallypaid.service.PaymentInstrument;
 import com.globallypaid.util.JsonUtils;
 import java.io.IOException;
@@ -16,29 +17,29 @@ public class CommonMockModel {
 
   public static Address address() {
     return Address.builder()
-        .line1(faker.address().streetAddress())
-        .city(faker.address().city())
-        .state(faker.address().state())
-        .postalCode(faker.address().zipCode())
-        .country(faker.address().countryCode())
+        .Line1(faker.address().streetAddress())
+        .City(faker.address().city())
+        .State(faker.address().state())
+        .PostalCode(faker.address().zipCode())
+        .CountryCode(faker.address().countryCode())
         .build();
   }
 
   public static BillingContact billingContact() {
     return BillingContact.builder()
-        .firstName(faker.name().firstName())
-        .lastName(faker.name().lastName())
-        .address(address())
-        .phone(faker.phoneNumber().phoneNumber())
-        .email(faker.internet().emailAddress())
+        .FirstName(faker.name().firstName())
+        .LastName(faker.name().lastName())
+        .Address(address())
+        .Phone(faker.phoneNumber().phoneNumber())
+        .Email(faker.internet().emailAddress())
         .build();
   }
 
   public static CreditCard creditCard() {
     return CreditCard.builder()
-        .number(String.valueOf(faker.number().digits(16)))
-        .expiration(String.valueOf(faker.number().digits(4)))
-        .cvv(String.valueOf(faker.number().digits(3)))
+        .Number(String.valueOf(faker.number().digits(16)))
+        .Expiration(String.valueOf(faker.number().digits(4)))
+        .CVV(String.valueOf(faker.number().digits(3)))
         .build();
   }
 
@@ -55,6 +56,20 @@ public class CommonMockModel {
     }
 
     return paymentInstrument;
+  }
+
+  public static PaymentInstrumentCard paymentInstrumentCard(){
+
+    PaymentInstrumentCard paymentInstrumentCard =
+            PaymentInstrumentCard.builder()
+                    .CreditCard(creditCard())
+                    .BillingContact(billingContact())
+                    .CustomerId(faker.lorem().word())
+                    .ClientCustomerId(faker.lorem().word())
+                    .build();
+
+    return paymentInstrumentCard;
+
   }
 
   public static <T extends Entity> Response response200WithCode00(T model) throws IOException {

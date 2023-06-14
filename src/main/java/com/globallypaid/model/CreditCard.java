@@ -13,13 +13,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CreditCard {
-  private String number;
-  private String expiration;
-  private String cvv;
-  private String brand;
+
+  @JsonProperty(value = "account_number")
+  private String Number;
+
+  @JsonProperty(value = "expiration")
+  private String Expiration;
+
+  @JsonProperty(value = "cvv")
+  private String CVV;
+
+  @JsonProperty(value = "brand")
+  private String Brand;
 
   @JsonProperty("last_four")
-  private String lastFour;
+  private String LastFour;
 
   private String bin;
 }

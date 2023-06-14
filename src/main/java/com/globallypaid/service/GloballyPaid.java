@@ -11,17 +11,14 @@ import com.globallypaid.http.Method;
 import com.globallypaid.http.Request;
 import com.globallypaid.http.RequestOptions;
 import com.globallypaid.http.Response;
-import com.globallypaid.model.CaptureRequest;
-import com.globallypaid.model.CaptureResponse;
-import com.globallypaid.model.ChargeRequest;
-import com.globallypaid.model.ChargeResponse;
+import com.globallypaid.model.*;
 import com.globallypaid.model.PaymentInstrumentToken;
-import com.globallypaid.model.RefundRequest;
-import com.globallypaid.model.RefundResponse;
-import com.globallypaid.model.TokenRequest;
+
 import java.io.IOException;
+import java.net.URI;
 import java.util.Objects;
 import java.util.Optional;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -81,7 +78,9 @@ public class GloballyPaid extends BasicInterface {
             .options(requestOptions)
             .build();
 
-    Response response = this.api(request);
+    Response response = this.tokenapi(request);
+    // Need to clear headers after using them
+    this.clearRequestHeaders();
     if (Objects.isNull(response) || Objects.isNull(response.getBody())) {
       throw new InvalidRequestException(400, ErrorMessage.BAD_REQUEST.getLabel(), null, null);
     }
@@ -89,6 +88,71 @@ public class GloballyPaid extends BasicInterface {
         .build()
         .fromJson(response.getBody(), PaymentInstrumentToken.class);
   }
+
+  /**
+   * Create a payment instrument using a token. Typically can just run a charge with a token with 'save_payment_instrument':true
+   * @param paymentInstrumentRequest
+   * @return
+   * @throws IOException
+   * @throws GloballyPaidException
+   */
+  public PaymentInstrumentToken createPaymentInstrument(PaymentInstrumentRequest paymentInstrumentRequest)
+          throws IOException, GloballyPaidException{
+    return createPaymentInstrument(paymentInstrumentRequest, null);
+  }
+
+  /**
+   * Create a payment instrument using a token. Typically can just run a charge with a token with 'save_payment_instrument':true
+   * @param paymentInstrumentRequest
+   * @param requestOptions
+   * @return
+   * @throws IOException
+   * @throws GloballyPaidException
+   */
+  public PaymentInstrumentToken createPaymentInstrument(PaymentInstrumentRequest paymentInstrumentRequest, RequestOptions requestOptions)
+          throws IOException, GloballyPaidException{
+    this.addHmacHeader(paymentInstrumentRequest.toJson(), requestOptions);
+    Request request =
+            Request.builder()
+                    .baseUri(getBaseUrl())
+                    .endpoint("/payment-instrument/token")
+                    .method(Method.POST)
+                    .headers(getRequestHeaders())
+                    .body(paymentInstrumentRequest.toJson())
+                    .options(requestOptions)
+                    .build();
+    Response response = this.tokenapi(request);
+    this.clearRequestHeaders();
+
+    if (Objects.isNull(response) || Objects.isNull(response.getBody())) {
+      throw new InvalidRequestException(400, ErrorMessage.BAD_REQUEST.getLabel(), null, null);
+    }
+    return PaymentInstrumentToken.builder()
+            .build()
+            .fromJson(response.getBody(), PaymentInstrumentToken.class);
+
+  }
+
+  public boolean delete(String id)throws GloballyPaidException{
+    return this.delete(id, null);
+  }
+  public boolean delete(String id, RequestOptions requestOptions) throws GloballyPaidException {
+    this.addHmacHeader("", requestOptions);
+    String endpoint = URI.create("/payment-instrument/delete/".concat(urlEncodeId(id))).toString();
+    Request request =
+            Request.builder()
+                    .baseUri(getBaseUrl())
+                    .endpoint(endpoint)
+                    .method(Method.DELETE)
+                    .headers(getRequestHeaders())
+                    .body("")
+                    .options(requestOptions)
+                    .build();
+
+    Response response = this.tokenapi(request);
+    return response.getBody().equals("true");
+  }
+
 
   /**
    * To charge a credit card or other payment source.
@@ -116,7 +180,7 @@ public class GloballyPaid extends BasicInterface {
       throws IOException, GloballyPaidException {
     if (!Optional.ofNullable(chargeRequest).isPresent()
         || Objects.isNull(chargeRequest.getSource())
-        || chargeRequest.getSource().isEmpty()) {
+        || chargeRequest.getSource() == null) {
       throw new InvalidRequestException(
           HttpStatus.SC_BAD_REQUEST, "You must provide charge source!", null, null);
     }
@@ -134,6 +198,7 @@ public class GloballyPaid extends BasicInterface {
             .build();
 
     Response response = this.api(request);
+    this.clearRequestHeaders();
     if (Objects.isNull(response) || Objects.isNull(response.getBody())) {
       throw new InvalidRequestException(400, ErrorMessage.BAD_REQUEST.getLabel(), null, null);
     }
@@ -182,6 +247,7 @@ public class GloballyPaid extends BasicInterface {
             .build();
 
     Response response = this.api(request);
+    this.clearRequestHeaders();
     if (Objects.isNull(response) || Objects.isNull(response.getBody())) {
       throw new InvalidRequestException(400, ErrorMessage.BAD_REQUEST.getLabel(), null, null);
     }
@@ -227,6 +293,7 @@ public class GloballyPaid extends BasicInterface {
             .build();
 
     Response response = this.api(request);
+    this.clearRequestHeaders();
     if (Objects.isNull(response) || Objects.isNull(response.getBody())) {
       throw new InvalidRequestException(400, ErrorMessage.BAD_REQUEST.getLabel(), null, null);
     }

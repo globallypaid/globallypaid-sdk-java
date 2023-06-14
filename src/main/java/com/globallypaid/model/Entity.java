@@ -1,6 +1,8 @@
 package com.globallypaid.model;
 
 import com.globallypaid.util.JsonUtils;
+import lombok.experimental.SuperBuilder;
+
 import java.io.IOException;
 
 /** Class to convert object to/from JSON. */

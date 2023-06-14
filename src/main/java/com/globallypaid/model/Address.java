@@ -13,17 +13,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Address {
-  @JsonProperty("line_1")
-  private String line1;
+  @JsonProperty(value = "line_1")
+  private String Line1;
 
-  @JsonProperty("line_2")
-  private String line2;
+  @JsonProperty(value = "line_2")
+  private String Line2;
 
-  private String city;
-  private String state;
+  @JsonProperty(value = "city")
+  private String City;
 
-  @JsonProperty("postal_code")
-  private String postalCode;
+  @JsonProperty(value = "state")
+  private String State;
 
-  private String country;
+  @JsonProperty(value = "postal_code")
+  private String PostalCode;
+
+  @JsonProperty(value = "country_code")
+  private String CountryCode;
 }

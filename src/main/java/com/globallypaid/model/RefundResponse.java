@@ -1,6 +1,7 @@
 package com.globallypaid.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,30 +17,43 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RefundResponse extends Entity {
   @JsonProperty("charge_transaction_id")
-  private String chargeTransactionID;
+  private String ChargeTransactionID;
 
-  private Integer amount;
-  private boolean success;
-  private String id;
+  @JsonProperty(value = "amount")
+  private Integer Amount;
+
+
+  @JsonProperty(value = "id")
+  private String Id;
 
   @JsonProperty("response_code")
-  private String responseCode;
+  private String ResponseCode;
 
-  private String message;
-  private String response;
-  private boolean approved;
+  @JsonProperty(value = "message")
+  private String Message;
+
+  // This is ignored when deepstack sends the response
+//  private String Response;
+
+  @JsonProperty(value = "approved")
+  private boolean Approved;
 
   @JsonProperty("auth_code")
-  private String authCode;
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  private String AuthCode;
 
   @JsonProperty("cvv_response")
-  private String cvvResponse;
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  private String CvvResponse;
 
   @JsonProperty("avs_response")
-  private String avsResponse;
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  private String AvsResponse;
 
-  @JsonProperty("processor_transaction_id")
-  private String processorTransactionID;
+  @JsonProperty(value = "processor_transaction_id")
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  private String ProcessorTransactionID;
 
-  private String completed;
+  @JsonProperty(value = "completed")
+  private String Completed;
 }
