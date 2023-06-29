@@ -6,7 +6,7 @@ buildscript {
 
 plugins {
     id 'java'
-    id 'maven'
+//    id 'maven'
     id 'maven-publish'
 }
 
@@ -27,9 +27,9 @@ dependencies {
     implementation('com.fasterxml.jackson.core:jackson-annotations:2.11.3')
     implementation('com.fasterxml.jackson.core:jackson-databind:2.11.3')
     implementation('org.apache.httpcomponents:httpclient:4.5.13')
-    testCompile('org.junit.jupiter:junit-jupiter:5.7.0')
-    testCompile('org.mockito:mockito-junit-jupiter:3.6.0')
-    testCompile('com.github.javafaker:javafaker:1.0.2')
+    testImplementation('org.junit.jupiter:junit-jupiter:5.7.0')
+    testImplementation('org.mockito:mockito-junit-jupiter:3.6.0')
+    testImplementation('com.github.javafaker:javafaker:1.0.2')
 }
 
 test {
@@ -40,4 +40,6 @@ test {
     }
 }
 
-apply from: "deploy.gradle"
+
+
+//apply from: "deploy.gradle"

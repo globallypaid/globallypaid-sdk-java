@@ -4,7 +4,7 @@
 [![Build Status](https://github.com/globallypaid/globallypaid-sdk-java/workflows/CI/badge.svg)](https://github.com/globallypaid/globallypaid-sdk-java/actions)
 [![JavaDoc](http://img.shields.io/badge/javadoc-reference-blue.svg)][javadoc]
 
-The official [GloballyPaid][globallypaid] Java library.
+The official [Deepstack] Java library.
 
 # Table of Contents
 
@@ -20,6 +20,10 @@ The official [GloballyPaid][globallypaid] Java library.
 <a name="installation"></a>
 ## Installation
 
+## Installation Notice
+
+Until further notice, the current installation methods will not work since the deployments are not synced. This will be changed soon, but for now, all SDK installations should be done through the Deepstack Github.
+
 ### Requirements
 
 - Java 1.8 or later
@@ -32,7 +36,7 @@ Add this dependency to your project's build file in the root:
 ...
 dependencies {
     ...
-    implementation "com.globallypaid:globallypaid-java:1.0.1"
+    implementation "com.deepstack:deepstack-java:1.0.2"
 }
 
 repositories {
@@ -47,9 +51,9 @@ Add this dependency to your project's POM:
 
 ```xml
 <dependency>
-  <groupId>com.globallypaid</groupId>
-  <artifactId>globallypaid-java</artifactId>
-  <version>1.0.1</version>
+  <groupId>com.deepstack</groupId>
+  <artifactId>deepstack-java</artifactId>
+  <version>1.0.2</version>
 </dependency>
 ```
 
@@ -76,7 +80,7 @@ The following is the minimum needed code to make a charge sale transaction:
 <a name="env-variables"></a>
 ### Environment Variables
 
-`globallypaid-java` supports the GloballyPaid Api Key, App ID and Shared Secret 
+`deepstack-java` supports the Deepstack Api Key, App ID and Shared Secret 
 values stored in the following environment variables:
 
 * `PUBLISHABLE_API_KEY`
@@ -93,29 +97,29 @@ with the following steps:
 
 1. Copy the sample environment file `env_sample.sh` to a new file
 ```bash
-cp env_sample.sh globallypaid_env.sh
+cp env_sample.sh deepstack_env.sh
 ```
-2. Edit the new `globallypaid_env.sh` to add your [Environment Variables](#env-variables)
-3. Source the `globallypaid_env.sh` file to set the variables in the current session
+2. Edit the new `deepstack_env.sh` to add your [Environment Variables](#env-variables)
+3. Source the `deepstack_env.sh` file to set the variables in the current session
 ```bash
-source globallypaid_env.sh
+source deepstack_env.sh
 ```
 
 #### Windows users:
 
 1. Copy the sample environment file `env_sample.bat` to a new file
 ```bash
-cp env_sample.bat globallypaid_env.bat
+cp env_sample.bat deepstack_env.bat
 ```
-2. Edit the new `globallypaid_env.bat` to add your [Environment Variables](#env-variables)
-3. Execute the `globallypaid_env.bat` file to set the variables
+2. Edit the new `deepstack_env.bat` to add your [Environment Variables](#env-variables)
+3. Execute the `deepstack_env.bat` file to set the variables
 ```bash
-globallypaid_env.bat
+deepstack_env.bat
 ```
 
 ### Initialize the Client
 ```java
-GloballyPaid globallyPaid = new GloballyPaid(
+DeepStack deepStack = new DeepStack(
           Config.builder()
               .publishableApiKey(System.getenv("PUBLISHABLE_API_KEY"))
               .appId(System.getenv("APP_ID"))
@@ -129,7 +133,7 @@ String publishableApiKey = "pk_live_xxxxx";
 String appId = "Your APP ID";
 String sharedSecret = "Your Shared Secret";
 
-GloballyPaid globallyPaid = new GloballyPaid(
+DeepStack deepStack = new DeepStack(
           Config.builder()
               .publishableApiKey(publishableApiKey)
               .appId(appId)
@@ -139,7 +143,7 @@ GloballyPaid globallyPaid = new GloballyPaid(
 
 You can also change to sandbox with the following setting:
 ```java
-GloballyPaid.setSandbox(true);
+DeepStack.setSandbox(true);
 ```
 
 ##### Per-request configuration
@@ -156,7 +160,7 @@ Customer.builder().build().retrieve("customer_id_here", requestOptions);
 RequestOptions requestOptions = RequestOptions.builder()
             .publishableApiKey("Your Publishable API Key").build();
 
-GloballyPaid.builder().build().token("token_request_here", requestOptions);
+DeepStack.builder().build().token("token_request_here", requestOptions);
 ```
 
 <a name="timeouts"></a>
@@ -165,8 +169,8 @@ GloballyPaid.builder().build().token("token_request_here", requestOptions);
 Connect and read timeouts can be configured globally:
 
 ```java
-GloballyPaid.setConnectTimeout(50 * 1000); // in milliseconds
-GloballyPaid.setReadTimeout(100 * 1000);
+DeepStack.setConnectTimeout(50 * 1000); // in milliseconds
+DeepStack.setReadTimeout(100 * 1000);
 ```
 
 Or on a finer grain level using `RequestOptions`:
@@ -176,7 +180,7 @@ RequestOptions options = RequestOptions.builder()
     .connectTimeout(50 * 1000) // in milliseconds
     .readTimeout(100*1000)
     .build();
-GloballyPaid.builder().build().charge(ChargeRequest.builder().build(), requestOptions);
+DeepStack.builder().build().charge(ChargeRequest.builder().build(), requestOptions);
 ```
 
 Please take care to set conservative read timeouts. Some API requests can take
@@ -189,20 +193,20 @@ servers.
 GloballyPaid Charge Sale Transaction example:
 
 ```java
-package com.globallypaid.example.payment;
+package com.deepstack.example.payment;
 
-import com.globallypaid.exception.GloballyPaidException;
-import com.globallypaid.http.Config;
-import com.globallypaid.model.ChargeRequest;
-import com.globallypaid.model.ChargeResponse;
-import com.globallypaid.service.GloballyPaid;
+import com.deepstack.exception.DeepStackException;
+import com.deepstack.http.Config;
+import com.deepstack.model.ChargeRequest;
+import com.deepstack.model.ChargeResponse;
+import com.deepstack.service.DeepStack;
 import java.io.IOException;
 
 public class ChargeSaleTransaction {
-  public static void main(String[] args) throws IOException, GloballyPaidException {
+  public static void main(String[] args) throws IOException, DeepStackException {
     try {
-      GloballyPaid globallyPaid =
-          new GloballyPaid(
+      DeepStack deepStack =
+          new DeepStack(
               Config.builder()
                   .publishableApiKey(System.getenv("PUBLISHABLE_API_KEY"))
                   .appId(System.getenv("APP_ID"))
@@ -223,16 +227,16 @@ public class ChargeSaleTransaction {
               .savePaymentInstrument(false)
               .build();
 
-      ChargeResponse chargeResponse = globallyPaid.charge(chargeRequest, null);
+      ChargeResponse chargeResponse = deepStack.charge(chargeRequest, null);
       System.out.println(chargeResponse);
-    } catch (GloballyPaidException e) {
+    } catch (DeepStackException e) {
       System.out.println(
           "ChargeSaleTransaction ---> Code: "
               + e.getCode()
               + "\nMsg: "
               + e.getMessage()
               + "\nApi error: "
-              + e.getGloballyPaidError());
+              + e.getDeepStackError());
       throw e;
     }
   }
@@ -243,25 +247,26 @@ See the project's [examples][examples] for more examples.
 
 <a name="charge-trans-js-sdk"></a>
 ### Make a Charge Sale Transaction with Javascript SDK integration
+
 ```java
-import com.globallypaid.exception.GloballyPaidException;
-import com.globallypaid.http.Config;
-import com.globallypaid.http.RequestOptions;
-import com.globallypaid.model.ChargeRequest;
-import com.globallypaid.model.ChargeResponse;
-import com.globallypaid.model.PaymentInstrumentToken;
+import com.deepstack.exception.DeepStackException;
+import com.deepstack.http.Config;
+import com.deepstack.http.RequestOptions;
+import com.deepstack.model.ChargeRequest;
+import com.deepstack.model.ChargeResponse;
+import com.deepstack.model.PaymentInstrumentToken;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ChargeService {
 
   public ChargeResponse charge(PaymentInstrumentToken paymentInstrumentToken)
-      throws GloballyPaidException {
+      throws DeepStackException {
 
     ChargeResponse chargeResponse = null;
 
-    GloballyPaid globallyPaid =
-        new GloballyPaid(
+    DeepStack deepStack =
+        new DeepStack(
             Config.builder()
                 .publishableApiKey(System.getenv("PUBLISHABLE_API_KEY"))
                 .appId(System.getenv("APP_ID"))
@@ -273,7 +278,7 @@ public class ChargeService {
       RequestOptions requestOptions =
           RequestOptions.builder().connectTimeout(50 * 1000).readTimeout(100 * 1000).build();
 
-      ChargeRequest gpChargeRequest =
+      ChargeRequest chargeRequest =
           ChargeRequest.builder()
               .source(paymentInstrumentToken.getId())
               .amount(160)
@@ -286,7 +291,7 @@ public class ChargeService {
               .savePaymentInstrument(false)
               .build();
 
-      chargeResponse = globallyPaid.charge(gpChargeRequest, requestOptions);
+      chargeResponse = deepStack.charge(chargeRequest, requestOptions);
       System.out.println(chargeResponse.toString());
     }
     return chargeResponse;
@@ -294,20 +299,20 @@ public class ChargeService {
 }
 ```
 
-Please visit [GloballyPaid Java SDK samples][java-sdk-sample] to see sample project.
+Please visit [Deepstack Java SDK samples][java-sdk-sample] to see sample project (Pending updates please refer to the samples above for now).
 
 <a name="about"></a>
 ## About
-globallypaid-java is maintained and funded by Globally Paid.
+deepstack-java is maintained and funded by Deepstack.
 
 If you've found a bug in the library or would like new features added, 
 go ahead and [open issues][java-sdk-open-issues] or [pull requests][java-sdk-pull-requests]!
 
-[globallypaid]: https://globallypaid.com/
-[api-docs]: https://docs.globallypaid.com/?java
+[globallypaid]: https://www.deepstack.io/
+[api-docs]: https://qa-v2.docs.globallypaid.com/
 [javadoc]: https://www.javadoc.io/doc/com.globallypaid/globallypaid-java/latest/index.html
 [java-sdk-open-issues]: https://github.com/globallypaid/globallypaid-sdk-java/issues
 [java-sdk-pull-requests]: https://github.com/globallypaid/globallypaid-sdk-java/pulls
 [examples]: https://github.com/globallypaid/globallypaid-sdk-java/blob/master/src/main/java/com/globallypaid/example/
 [java-sdk-sample]: https://github.com/globallypaid/globallypaid-sdk-java-samples
-[support-center]: https://globallypaid.com/contact-us/
+[support-center]: https://www.deepstack.io/#sandbox

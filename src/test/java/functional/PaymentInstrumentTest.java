@@ -1,19 +1,13 @@
 package functional;
 
-import com.globallypaid.exception.ApiException;
-import com.globallypaid.exception.AuthenticationException;
-import com.globallypaid.exception.ForbiddenException;
-import com.globallypaid.exception.GloballyPaidException;
-import com.globallypaid.exception.InvalidRequestException;
-import com.globallypaid.exception.NotAcceptableException;
-import com.globallypaid.exception.NotAllowedException;
-import com.globallypaid.exception.RateLimitException;
-import com.globallypaid.http.ErrorMessage;
-import com.globallypaid.http.Response;
-import com.globallypaid.model.PaymentInstrumentToken;
-import com.globallypaid.model.TokenRequest;
-import com.globallypaid.service.Customer;
-import com.globallypaid.service.PaymentInstrument;
+import com.deepstack.exception.*;
+import com.deepstack.exception.DeepStackException;
+import com.deepstack.http.ErrorMessage;
+import com.deepstack.http.Response;
+import com.deepstack.model.PaymentInstrumentToken;
+import com.deepstack.model.TokenRequest;
+import com.deepstack.service.Customer;
+import com.deepstack.service.PaymentInstrument;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
@@ -39,7 +33,7 @@ public class PaymentInstrumentTest {
   @Mock PaymentInstrument paymentInstrument;
 
   @Test
-  public void testCreatePaymentInstrumentSuccess() throws GloballyPaidException, IOException {
+  public void testCreatePaymentInstrumentSuccess() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     PaymentInstrumentToken expectedPaymentInstrumentToken =
         GloballyPaidMockModel.paymentInstrumentToken(tokenRequest);
@@ -62,12 +56,12 @@ public class PaymentInstrumentTest {
 
   @Test
   public void testCreatePaymentInstrumentWithNullResponseBodyReturnExecption()
-      throws GloballyPaidException, IOException {
+      throws DeepStackException, IOException {
     lenient().when(paymentInstrument.api(any())).thenReturn(null);
     lenient().when(paymentInstrument.create()).thenCallRealMethod();
     lenient().when(paymentInstrument.create(any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(InvalidRequestException.class, () -> paymentInstrument.create());
 
     assertEquals(400, exception.getCode());
@@ -75,7 +69,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testCreatePaymentInstrumentFailWith400() throws GloballyPaidException, IOException {
+  public void testCreatePaymentInstrumentFailWith400() throws DeepStackException, IOException {
     lenient()
         .when(paymentInstrument.api(any()))
         .thenThrow(
@@ -83,7 +77,7 @@ public class PaymentInstrumentTest {
     lenient().when(paymentInstrument.create()).thenCallRealMethod();
     lenient().when(paymentInstrument.create(any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(InvalidRequestException.class, paymentInstrument::create);
 
     assertEquals(400, exception.getCode());
@@ -91,14 +85,14 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testCreatePaymentInstrumentFailWith404() throws GloballyPaidException, IOException {
+  public void testCreatePaymentInstrumentFailWith404() throws DeepStackException, IOException {
     lenient()
         .when(paymentInstrument.api(any()))
         .thenThrow(new InvalidRequestException(404, ErrorMessage.NOT_FOUND.getLabel(), null, null));
     lenient().when(paymentInstrument.create()).thenCallRealMethod();
     lenient().when(paymentInstrument.create(any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(InvalidRequestException.class, paymentInstrument::create);
 
     assertEquals(404, exception.getCode());
@@ -106,14 +100,14 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testCreatePaymentInstrumentFailWith401() throws GloballyPaidException, IOException {
+  public void testCreatePaymentInstrumentFailWith401() throws DeepStackException, IOException {
     lenient()
         .when(paymentInstrument.api(any()))
         .thenThrow(new AuthenticationException(401, ErrorMessage.UNAUTHORIZED.getLabel()));
     lenient().when(paymentInstrument.create()).thenCallRealMethod();
     lenient().when(paymentInstrument.create(any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(AuthenticationException.class, paymentInstrument::create);
 
     assertEquals(401, exception.getCode());
@@ -121,14 +115,14 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testCreatePaymentInstrumentFailWith403() throws GloballyPaidException, IOException {
+  public void testCreatePaymentInstrumentFailWith403() throws DeepStackException, IOException {
     lenient()
         .when(paymentInstrument.api(any()))
         .thenThrow(new ForbiddenException(403, ErrorMessage.FORBIDDEN.getLabel(), null));
     lenient().when(paymentInstrument.create()).thenCallRealMethod();
     lenient().when(paymentInstrument.create(any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(ForbiddenException.class, paymentInstrument::create);
 
     assertEquals(403, exception.getCode());
@@ -136,14 +130,14 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testCreatePaymentInstrumentFailWith405() throws GloballyPaidException, IOException {
+  public void testCreatePaymentInstrumentFailWith405() throws DeepStackException, IOException {
     lenient()
         .when(paymentInstrument.api(any()))
         .thenThrow(new NotAllowedException(405, ErrorMessage.METHOD_NOT_ALLOWED.getLabel()));
     lenient().when(paymentInstrument.create()).thenCallRealMethod();
     lenient().when(paymentInstrument.create(any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(NotAllowedException.class, paymentInstrument::create);
 
     assertEquals(405, exception.getCode());
@@ -151,14 +145,14 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testCreatePaymentInstrumentFailWith406() throws GloballyPaidException, IOException {
+  public void testCreatePaymentInstrumentFailWith406() throws DeepStackException, IOException {
     lenient()
         .when(paymentInstrument.api(any()))
         .thenThrow(new NotAcceptableException(406, ErrorMessage.NOT_ACCEPTABLE.getLabel()));
     lenient().when(paymentInstrument.create()).thenCallRealMethod();
     lenient().when(paymentInstrument.create(any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(NotAcceptableException.class, paymentInstrument::create);
 
     assertEquals(406, exception.getCode());
@@ -166,28 +160,28 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testCreatePaymentInstrumentFailWith410() throws GloballyPaidException, IOException {
+  public void testCreatePaymentInstrumentFailWith410() throws DeepStackException, IOException {
     lenient()
         .when(paymentInstrument.api(any()))
         .thenThrow(new ApiException(410, ErrorMessage.GONE.getLabel(), null));
     lenient().when(paymentInstrument.create()).thenCallRealMethod();
     lenient().when(paymentInstrument.create(any())).thenCallRealMethod();
 
-    GloballyPaidException exception = assertThrows(ApiException.class, paymentInstrument::create);
+    DeepStackException exception = assertThrows(ApiException.class, paymentInstrument::create);
 
     assertEquals(410, exception.getCode());
     assertEquals(ErrorMessage.GONE.getLabel(), exception.getMessage());
   }
 
   @Test
-  public void testCreatePaymentInstrumentFailWith429() throws GloballyPaidException, IOException {
+  public void testCreatePaymentInstrumentFailWith429() throws DeepStackException, IOException {
     lenient()
         .when(paymentInstrument.api(any()))
         .thenThrow(new RateLimitException(429, ErrorMessage.RATE_LIMIT_EXCEEDED.getLabel(), null));
     lenient().when(paymentInstrument.create()).thenCallRealMethod();
     lenient().when(paymentInstrument.create(any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(RateLimitException.class, paymentInstrument::create);
 
     assertEquals(429, exception.getCode());
@@ -195,35 +189,35 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testCreatePaymentInstrumentFailWith503() throws GloballyPaidException, IOException {
+  public void testCreatePaymentInstrumentFailWith503() throws DeepStackException, IOException {
     lenient()
         .when(paymentInstrument.api(any()))
         .thenThrow(new ApiException(503, ErrorMessage.SERVICE_UNAVAILABLE.getLabel(), null));
     lenient().when(paymentInstrument.create()).thenCallRealMethod();
     lenient().when(paymentInstrument.create(any())).thenCallRealMethod();
 
-    GloballyPaidException exception = assertThrows(ApiException.class, paymentInstrument::create);
+    DeepStackException exception = assertThrows(ApiException.class, paymentInstrument::create);
 
     assertEquals(503, exception.getCode());
     assertEquals(ErrorMessage.SERVICE_UNAVAILABLE.getLabel(), exception.getMessage());
   }
 
   @Test
-  public void testCreatePaymentInstrumentFailWith500() throws GloballyPaidException, IOException {
+  public void testCreatePaymentInstrumentFailWith500() throws DeepStackException, IOException {
     lenient()
         .when(paymentInstrument.api(any()))
         .thenThrow(new ApiException(500, ErrorMessage.INTERNAL_SERVER_ERROR.getLabel(), null));
     lenient().when(paymentInstrument.create()).thenCallRealMethod();
     lenient().when(paymentInstrument.create(any())).thenCallRealMethod();
 
-    GloballyPaidException exception = assertThrows(ApiException.class, paymentInstrument::create);
+    DeepStackException exception = assertThrows(ApiException.class, paymentInstrument::create);
 
     assertEquals(500, exception.getCode());
     assertEquals(ErrorMessage.INTERNAL_SERVER_ERROR.getLabel(), exception.getMessage());
   }
 
   @Test
-  public void testUpdatePaymentInstrumentSuccess() throws GloballyPaidException, IOException {
+  public void testUpdatePaymentInstrumentSuccess() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     PaymentInstrumentToken expectedPaymentInstrumentToken =
         GloballyPaidMockModel.paymentInstrumentToken(tokenRequest);
@@ -247,10 +241,10 @@ public class PaymentInstrumentTest {
 
   @Test
   public void testUpdatePaymentInstrumentWithNullIdFail()
-      throws IOException, GloballyPaidException {
+      throws IOException, DeepStackException {
     when(paymentInstrument.update(null)).thenCallRealMethod();
     when(paymentInstrument.update(null, null)).thenCallRealMethod();
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(InvalidRequestException.class, () -> paymentInstrument.update(null));
 
     assertEquals(400, exception.getCode());
@@ -258,7 +252,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testUpdatePaymentInstrumentFailWith400() throws GloballyPaidException, IOException {
+  public void testUpdatePaymentInstrumentFailWith400() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     PaymentInstrumentToken expectedPaymentInstrumentToken =
         GloballyPaidMockModel.paymentInstrumentToken(tokenRequest);
@@ -273,7 +267,7 @@ public class PaymentInstrumentTest {
         .when(paymentInstrument.update(expectedPaymentInstrumentToken.getId(), null))
         .thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(
             InvalidRequestException.class,
             () -> paymentInstrument.update(expectedPaymentInstrumentToken.getId()));
@@ -283,7 +277,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testUpdatePaymentInstrumentFailWith401() throws GloballyPaidException, IOException {
+  public void testUpdatePaymentInstrumentFailWith401() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     PaymentInstrumentToken expectedPaymentInstrumentToken =
         GloballyPaidMockModel.paymentInstrumentToken(tokenRequest);
@@ -297,7 +291,7 @@ public class PaymentInstrumentTest {
         .when(paymentInstrument.update(expectedPaymentInstrumentToken.getId(), null))
         .thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(
             AuthenticationException.class,
             () -> paymentInstrument.update(expectedPaymentInstrumentToken.getId()));
@@ -307,7 +301,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testUpdatePaymentInstrumentFailWith403() throws GloballyPaidException, IOException {
+  public void testUpdatePaymentInstrumentFailWith403() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     PaymentInstrumentToken expectedPaymentInstrumentToken =
         GloballyPaidMockModel.paymentInstrumentToken(tokenRequest);
@@ -321,7 +315,7 @@ public class PaymentInstrumentTest {
         .when(paymentInstrument.update(expectedPaymentInstrumentToken.getId(), null))
         .thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(
             ForbiddenException.class,
             () -> paymentInstrument.update(expectedPaymentInstrumentToken.getId()));
@@ -331,7 +325,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testUpdatePaymentInstrumentFailWith404() throws GloballyPaidException, IOException {
+  public void testUpdatePaymentInstrumentFailWith404() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     PaymentInstrumentToken expectedPaymentInstrumentToken =
         GloballyPaidMockModel.paymentInstrumentToken(tokenRequest);
@@ -345,7 +339,7 @@ public class PaymentInstrumentTest {
         .when(paymentInstrument.update(expectedPaymentInstrumentToken.getId(), null))
         .thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(
             InvalidRequestException.class,
             () -> paymentInstrument.update(expectedPaymentInstrumentToken.getId()));
@@ -355,7 +349,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testUpdatePaymentInstrumentFailWith405() throws GloballyPaidException, IOException {
+  public void testUpdatePaymentInstrumentFailWith405() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     PaymentInstrumentToken expectedPaymentInstrumentToken =
         GloballyPaidMockModel.paymentInstrumentToken(tokenRequest);
@@ -369,7 +363,7 @@ public class PaymentInstrumentTest {
         .when(paymentInstrument.update(expectedPaymentInstrumentToken.getId(), null))
         .thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(
             NotAllowedException.class,
             () -> paymentInstrument.update(expectedPaymentInstrumentToken.getId()));
@@ -379,7 +373,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testUpdatePaymentInstrumentFailWith406() throws GloballyPaidException, IOException {
+  public void testUpdatePaymentInstrumentFailWith406() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     PaymentInstrumentToken expectedPaymentInstrumentToken =
         GloballyPaidMockModel.paymentInstrumentToken(tokenRequest);
@@ -393,7 +387,7 @@ public class PaymentInstrumentTest {
         .when(paymentInstrument.update(expectedPaymentInstrumentToken.getId(), null))
         .thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(
             NotAcceptableException.class,
             () -> paymentInstrument.update(expectedPaymentInstrumentToken.getId()));
@@ -403,7 +397,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testUpdatePaymentInstrumentFailWith410() throws GloballyPaidException, IOException {
+  public void testUpdatePaymentInstrumentFailWith410() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     PaymentInstrumentToken expectedPaymentInstrumentToken =
         GloballyPaidMockModel.paymentInstrumentToken(tokenRequest);
@@ -417,7 +411,7 @@ public class PaymentInstrumentTest {
         .when(paymentInstrument.update(expectedPaymentInstrumentToken.getId(), null))
         .thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(
             ApiException.class,
             () -> paymentInstrument.update(expectedPaymentInstrumentToken.getId()));
@@ -427,7 +421,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testUpdatePaymentInstrumentFailWith429() throws GloballyPaidException, IOException {
+  public void testUpdatePaymentInstrumentFailWith429() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     PaymentInstrumentToken expectedPaymentInstrumentToken =
         GloballyPaidMockModel.paymentInstrumentToken(tokenRequest);
@@ -441,7 +435,7 @@ public class PaymentInstrumentTest {
         .when(paymentInstrument.update(expectedPaymentInstrumentToken.getId(), null))
         .thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(
             RateLimitException.class,
             () -> paymentInstrument.update(expectedPaymentInstrumentToken.getId()));
@@ -451,7 +445,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testUpdatePaymentInstrumentFailWith503() throws GloballyPaidException, IOException {
+  public void testUpdatePaymentInstrumentFailWith503() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     PaymentInstrumentToken expectedPaymentInstrumentToken =
         GloballyPaidMockModel.paymentInstrumentToken(tokenRequest);
@@ -465,7 +459,7 @@ public class PaymentInstrumentTest {
         .when(paymentInstrument.update(expectedPaymentInstrumentToken.getId(), null))
         .thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(
             ApiException.class,
             () -> paymentInstrument.update(expectedPaymentInstrumentToken.getId()));
@@ -475,7 +469,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testUpdatePaymentInstrumentFailWith500() throws GloballyPaidException, IOException {
+  public void testUpdatePaymentInstrumentFailWith500() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     PaymentInstrumentToken expectedPaymentInstrumentToken =
         GloballyPaidMockModel.paymentInstrumentToken(tokenRequest);
@@ -489,7 +483,7 @@ public class PaymentInstrumentTest {
         .when(paymentInstrument.update(expectedPaymentInstrumentToken.getId(), null))
         .thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(
             ApiException.class,
             () -> paymentInstrument.update(expectedPaymentInstrumentToken.getId()));
@@ -499,7 +493,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testRetrievePaymentInstrumentSuccess() throws GloballyPaidException, IOException {
+  public void testRetrievePaymentInstrumentSuccess() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     PaymentInstrumentToken expectedPaymentInstrumentToken =
         GloballyPaidMockModel.paymentInstrumentToken(tokenRequest);
@@ -522,7 +516,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testRetrievePaymentInstrumentFailWith400() throws GloballyPaidException, IOException {
+  public void testRetrievePaymentInstrumentFailWith400() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     PaymentInstrumentToken expectedPaymentInstrumentToken =
         GloballyPaidMockModel.paymentInstrumentToken(tokenRequest);
@@ -537,7 +531,7 @@ public class PaymentInstrumentTest {
         .when(paymentInstrument.retrieve(expectedPaymentInstrumentToken.getId(), null))
         .thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(
             InvalidRequestException.class,
             () -> paymentInstrument.retrieve(expectedPaymentInstrumentToken.getId()));
@@ -547,7 +541,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testRetrievePaymentInstrumentFailWith401() throws GloballyPaidException, IOException {
+  public void testRetrievePaymentInstrumentFailWith401() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     PaymentInstrumentToken expectedPaymentInstrumentToken =
         GloballyPaidMockModel.paymentInstrumentToken(tokenRequest);
@@ -561,7 +555,7 @@ public class PaymentInstrumentTest {
         .when(paymentInstrument.retrieve(expectedPaymentInstrumentToken.getId(), null))
         .thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(
             AuthenticationException.class,
             () -> paymentInstrument.retrieve(expectedPaymentInstrumentToken.getId()));
@@ -571,7 +565,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testRetrievePaymentInstrumentFailWith403() throws GloballyPaidException, IOException {
+  public void testRetrievePaymentInstrumentFailWith403() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     PaymentInstrumentToken expectedPaymentInstrumentToken =
         GloballyPaidMockModel.paymentInstrumentToken(tokenRequest);
@@ -585,7 +579,7 @@ public class PaymentInstrumentTest {
         .when(paymentInstrument.retrieve(expectedPaymentInstrumentToken.getId(), null))
         .thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(
             ForbiddenException.class,
             () -> paymentInstrument.retrieve(expectedPaymentInstrumentToken.getId()));
@@ -595,7 +589,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testRetrievePaymentInstrumentFailWith404() throws GloballyPaidException, IOException {
+  public void testRetrievePaymentInstrumentFailWith404() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     PaymentInstrumentToken expectedPaymentInstrumentToken =
         GloballyPaidMockModel.paymentInstrumentToken(tokenRequest);
@@ -609,7 +603,7 @@ public class PaymentInstrumentTest {
         .when(paymentInstrument.retrieve(expectedPaymentInstrumentToken.getId(), null))
         .thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(
             InvalidRequestException.class,
             () -> paymentInstrument.retrieve(expectedPaymentInstrumentToken.getId()));
@@ -619,7 +613,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testRetrievePaymentInstrumentFailWith405() throws GloballyPaidException, IOException {
+  public void testRetrievePaymentInstrumentFailWith405() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     PaymentInstrumentToken expectedPaymentInstrumentToken =
         GloballyPaidMockModel.paymentInstrumentToken(tokenRequest);
@@ -633,7 +627,7 @@ public class PaymentInstrumentTest {
         .when(paymentInstrument.retrieve(expectedPaymentInstrumentToken.getId(), null))
         .thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(
             NotAllowedException.class,
             () -> paymentInstrument.retrieve(expectedPaymentInstrumentToken.getId()));
@@ -643,7 +637,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testRetrievePaymentInstrumentFailWith406() throws GloballyPaidException, IOException {
+  public void testRetrievePaymentInstrumentFailWith406() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     PaymentInstrumentToken expectedPaymentInstrumentToken =
         GloballyPaidMockModel.paymentInstrumentToken(tokenRequest);
@@ -657,7 +651,7 @@ public class PaymentInstrumentTest {
         .when(paymentInstrument.retrieve(expectedPaymentInstrumentToken.getId(), null))
         .thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(
             NotAcceptableException.class,
             () -> paymentInstrument.retrieve(expectedPaymentInstrumentToken.getId()));
@@ -667,7 +661,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testRetrievePaymentInstrumentFailWith410() throws GloballyPaidException, IOException {
+  public void testRetrievePaymentInstrumentFailWith410() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     PaymentInstrumentToken expectedPaymentInstrumentToken =
         GloballyPaidMockModel.paymentInstrumentToken(tokenRequest);
@@ -681,7 +675,7 @@ public class PaymentInstrumentTest {
         .when(paymentInstrument.retrieve(expectedPaymentInstrumentToken.getId(), null))
         .thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(
             ApiException.class,
             () -> paymentInstrument.retrieve(expectedPaymentInstrumentToken.getId()));
@@ -691,7 +685,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testRetrievePaymentInstrumentFailWith429() throws GloballyPaidException, IOException {
+  public void testRetrievePaymentInstrumentFailWith429() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     PaymentInstrumentToken expectedPaymentInstrumentToken =
         GloballyPaidMockModel.paymentInstrumentToken(tokenRequest);
@@ -705,7 +699,7 @@ public class PaymentInstrumentTest {
         .when(paymentInstrument.retrieve(expectedPaymentInstrumentToken.getId(), null))
         .thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(
             RateLimitException.class,
             () -> paymentInstrument.retrieve(expectedPaymentInstrumentToken.getId()));
@@ -715,7 +709,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testRetrievePaymentInstrumentFailWith503() throws GloballyPaidException, IOException {
+  public void testRetrievePaymentInstrumentFailWith503() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     PaymentInstrumentToken expectedPaymentInstrumentToken =
         GloballyPaidMockModel.paymentInstrumentToken(tokenRequest);
@@ -729,7 +723,7 @@ public class PaymentInstrumentTest {
         .when(paymentInstrument.retrieve(expectedPaymentInstrumentToken.getId(), null))
         .thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(
             ApiException.class,
             () -> paymentInstrument.retrieve(expectedPaymentInstrumentToken.getId()));
@@ -739,7 +733,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testRetrievePaymentInstrumentFailWith500() throws GloballyPaidException, IOException {
+  public void testRetrievePaymentInstrumentFailWith500() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     PaymentInstrumentToken expectedPaymentInstrumentToken =
         GloballyPaidMockModel.paymentInstrumentToken(tokenRequest);
@@ -753,7 +747,7 @@ public class PaymentInstrumentTest {
         .when(paymentInstrument.retrieve(expectedPaymentInstrumentToken.getId(), null))
         .thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(
             ApiException.class,
             () -> paymentInstrument.retrieve(expectedPaymentInstrumentToken.getId()));
@@ -763,7 +757,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testListPaymentInstrumentSuccess() throws GloballyPaidException, IOException {
+  public void testListPaymentInstrumentSuccess() throws DeepStackException, IOException {
     Customer customer = CustomerMockModel.customer();
     List<PaymentInstrumentToken> expectedPaymentInstruments =
         PaymentInstrumentMockModel.paymentInstrumentList(customer);
@@ -781,7 +775,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testListPaymentInstrumentFailWith400() throws GloballyPaidException, IOException {
+  public void testListPaymentInstrumentFailWith400() throws DeepStackException, IOException {
     Customer customer = CustomerMockModel.customer();
     lenient()
         .when(paymentInstrument.api(any()))
@@ -790,7 +784,7 @@ public class PaymentInstrumentTest {
     lenient().when(paymentInstrument.list(customer.getId())).thenCallRealMethod();
     lenient().when(paymentInstrument.list(customer.getId(), null, null)).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(InvalidRequestException.class, () -> paymentInstrument.list(customer.getId()));
 
     assertEquals(400, exception.getCode());
@@ -798,7 +792,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testListPaymentInstrumentFailWith401() throws GloballyPaidException, IOException {
+  public void testListPaymentInstrumentFailWith401() throws DeepStackException, IOException {
     Customer customer = CustomerMockModel.customer();
     lenient()
         .when(paymentInstrument.api(any()))
@@ -806,7 +800,7 @@ public class PaymentInstrumentTest {
     lenient().when(paymentInstrument.list(customer.getId())).thenCallRealMethod();
     lenient().when(paymentInstrument.list(customer.getId(), null, null)).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(AuthenticationException.class, () -> paymentInstrument.list(customer.getId()));
 
     assertEquals(401, exception.getCode());
@@ -814,7 +808,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testListPaymentInstrumentFailWith403() throws GloballyPaidException, IOException {
+  public void testListPaymentInstrumentFailWith403() throws DeepStackException, IOException {
     Customer customer = CustomerMockModel.customer();
     lenient()
         .when(paymentInstrument.api(any()))
@@ -822,7 +816,7 @@ public class PaymentInstrumentTest {
     lenient().when(paymentInstrument.list(customer.getId())).thenCallRealMethod();
     lenient().when(paymentInstrument.list(customer.getId(), null, null)).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(ForbiddenException.class, () -> paymentInstrument.list(customer.getId()));
 
     assertEquals(403, exception.getCode());
@@ -830,7 +824,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testListPaymentInstrumentFailWith404() throws GloballyPaidException, IOException {
+  public void testListPaymentInstrumentFailWith404() throws DeepStackException, IOException {
     Customer customer = CustomerMockModel.customer();
     lenient()
         .when(paymentInstrument.api(any()))
@@ -838,7 +832,7 @@ public class PaymentInstrumentTest {
     lenient().when(paymentInstrument.list(customer.getId())).thenCallRealMethod();
     lenient().when(paymentInstrument.list(customer.getId(), null, null)).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(InvalidRequestException.class, () -> paymentInstrument.list(customer.getId()));
 
     assertEquals(404, exception.getCode());
@@ -846,7 +840,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testListPaymentInstrumentFailWith405() throws GloballyPaidException, IOException {
+  public void testListPaymentInstrumentFailWith405() throws DeepStackException, IOException {
     Customer customer = CustomerMockModel.customer();
     lenient()
         .when(paymentInstrument.api(any()))
@@ -854,7 +848,7 @@ public class PaymentInstrumentTest {
     lenient().when(paymentInstrument.list(customer.getId())).thenCallRealMethod();
     lenient().when(paymentInstrument.list(customer.getId(), null, null)).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(NotAllowedException.class, () -> paymentInstrument.list(customer.getId()));
 
     assertEquals(405, exception.getCode());
@@ -862,7 +856,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testListPaymentInstrumentFailWith406() throws GloballyPaidException, IOException {
+  public void testListPaymentInstrumentFailWith406() throws DeepStackException, IOException {
     Customer customer = CustomerMockModel.customer();
     lenient()
         .when(paymentInstrument.api(any()))
@@ -870,7 +864,7 @@ public class PaymentInstrumentTest {
     lenient().when(paymentInstrument.list(customer.getId())).thenCallRealMethod();
     lenient().when(paymentInstrument.list(customer.getId(), null, null)).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(NotAcceptableException.class, () -> paymentInstrument.list(customer.getId()));
 
     assertEquals(406, exception.getCode());
@@ -878,7 +872,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testListPaymentInstrumentFailWith410() throws GloballyPaidException, IOException {
+  public void testListPaymentInstrumentFailWith410() throws DeepStackException, IOException {
     Customer customer = CustomerMockModel.customer();
     lenient()
         .when(paymentInstrument.api(any()))
@@ -886,7 +880,7 @@ public class PaymentInstrumentTest {
     lenient().when(paymentInstrument.list(customer.getId())).thenCallRealMethod();
     lenient().when(paymentInstrument.list(customer.getId(), null, null)).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(ApiException.class, () -> paymentInstrument.list(customer.getId()));
 
     assertEquals(410, exception.getCode());
@@ -894,7 +888,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testListPaymentInstrumentFailWith429() throws GloballyPaidException, IOException {
+  public void testListPaymentInstrumentFailWith429() throws DeepStackException, IOException {
     Customer customer = CustomerMockModel.customer();
     lenient()
         .when(paymentInstrument.api(any()))
@@ -902,7 +896,7 @@ public class PaymentInstrumentTest {
     lenient().when(paymentInstrument.list(customer.getId())).thenCallRealMethod();
     lenient().when(paymentInstrument.list(customer.getId(), null, null)).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(RateLimitException.class, () -> paymentInstrument.list(customer.getId()));
 
     assertEquals(429, exception.getCode());
@@ -910,7 +904,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testListPaymentInstrumentFailWith503() throws GloballyPaidException, IOException {
+  public void testListPaymentInstrumentFailWith503() throws DeepStackException, IOException {
     Customer customer = CustomerMockModel.customer();
     lenient()
         .when(paymentInstrument.api(any()))
@@ -918,7 +912,7 @@ public class PaymentInstrumentTest {
     lenient().when(paymentInstrument.list(customer.getId())).thenCallRealMethod();
     lenient().when(paymentInstrument.list(customer.getId(), null, null)).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(ApiException.class, () -> paymentInstrument.list(customer.getId()));
 
     assertEquals(503, exception.getCode());
@@ -926,7 +920,7 @@ public class PaymentInstrumentTest {
   }
 
   @Test
-  public void testListPaymentInstrumentFailWith500() throws GloballyPaidException, IOException {
+  public void testListPaymentInstrumentFailWith500() throws DeepStackException, IOException {
     Customer customer = CustomerMockModel.customer();
     lenient()
         .when(paymentInstrument.api(any()))
@@ -934,7 +928,7 @@ public class PaymentInstrumentTest {
     lenient().when(paymentInstrument.list(customer.getId())).thenCallRealMethod();
     lenient().when(paymentInstrument.list(customer.getId(), null, null)).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(ApiException.class, () -> paymentInstrument.list(customer.getId()));
 
     assertEquals(500, exception.getCode());

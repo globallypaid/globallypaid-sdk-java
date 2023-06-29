@@ -1,18 +1,12 @@
 package functional;
 
+import com.deepstack.exception.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.globallypaid.exception.ApiException;
-import com.globallypaid.exception.AuthenticationException;
-import com.globallypaid.exception.ForbiddenException;
-import com.globallypaid.exception.GloballyPaidException;
-import com.globallypaid.exception.InvalidRequestException;
-import com.globallypaid.exception.NotAcceptableException;
-import com.globallypaid.exception.NotAllowedException;
-import com.globallypaid.exception.RateLimitException;
-import com.globallypaid.http.ErrorMessage;
-import com.globallypaid.http.Response;
-import com.globallypaid.service.Customer;
+import com.deepstack.exception.DeepStackException;
+import com.deepstack.http.ErrorMessage;
+import com.deepstack.http.Response;
+import com.deepstack.service.Customer;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +32,7 @@ public class CustomerTest {
   @Mock Customer customer;
 
   @Test
-  public void testCreateCustomerSuccess() throws GloballyPaidException, IOException {
+  public void testCreateCustomerSuccess() throws DeepStackException, IOException {
     Customer expectedCustomer = CustomerMockModel.customer();
 
     Response expectedResponse = CommonMockModel.response200WithCode00(expectedCustomer);
@@ -56,24 +50,24 @@ public class CustomerTest {
 
   @Test
   public void testCreateCustomerWithoutClientCustomerIdFail()
-      throws GloballyPaidException, IOException {
-    GloballyPaidException gpe =
+      throws DeepStackException, IOException {
+    DeepStackException gpe =
         new InvalidRequestException(400, ErrorMessage.BAD_REQUEST.getLabel(), null, null);
-    gpe.setGloballyPaidError(CustomerMockModel.customerCreateGloballyPaidError());
+    gpe.setDeepStackError(CustomerMockModel.customerCreateGloballyPaidError());
 
     Customer expectedCustomerWithoutClientCustomerId = mock(Customer.class);
     lenient().when(expectedCustomerWithoutClientCustomerId.api(any())).thenThrow(gpe);
     lenient().when(expectedCustomerWithoutClientCustomerId.create()).thenCallRealMethod();
     lenient().when(expectedCustomerWithoutClientCustomerId.create(any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(
             InvalidRequestException.class, expectedCustomerWithoutClientCustomerId::create);
 
     assertEquals(400, exception.getCode());
     assertEquals(ErrorMessage.BAD_REQUEST.getLabel(), exception.getMessage());
-    assertTrue(Objects.nonNull(exception.getGloballyPaidError()));
-    Object errors = exception.getGloballyPaidError().get("errors");
+    assertTrue(Objects.nonNull(exception.getDeepStackError()));
+    Object errors = exception.getDeepStackError().get("errors");
     assertTrue(Objects.nonNull(errors));
     Map<String, Object> error =
         new ObjectMapper().convertValue(errors, new TypeReference<Map<String, Object>>() {});
@@ -87,12 +81,12 @@ public class CustomerTest {
 
   @Test
   public void testCreateCustomerWithNullResponseBodyReturnExecption()
-      throws GloballyPaidException, IOException {
+      throws DeepStackException, IOException {
     lenient().when(customer.api(any())).thenReturn(null);
     lenient().when(customer.create()).thenCallRealMethod();
     lenient().when(customer.create(any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(InvalidRequestException.class, () -> customer.create());
 
     assertEquals(400, exception.getCode());
@@ -100,7 +94,7 @@ public class CustomerTest {
   }
 
   @Test
-  public void testCreateCustomerFailWith400() throws GloballyPaidException, IOException {
+  public void testCreateCustomerFailWith400() throws DeepStackException, IOException {
     lenient()
         .when(customer.api(any()))
         .thenThrow(
@@ -108,140 +102,140 @@ public class CustomerTest {
     lenient().when(customer.create()).thenCallRealMethod();
     lenient().when(customer.create(any())).thenCallRealMethod();
 
-    GloballyPaidException exception = assertThrows(InvalidRequestException.class, customer::create);
+    DeepStackException exception = assertThrows(InvalidRequestException.class, customer::create);
 
     assertEquals(400, exception.getCode());
     assertEquals(ErrorMessage.BAD_REQUEST.getLabel(), exception.getMessage());
   }
 
   @Test
-  public void testCreateCustomerFailWith404() throws GloballyPaidException, IOException {
+  public void testCreateCustomerFailWith404() throws DeepStackException, IOException {
     lenient()
         .when(customer.api(any()))
         .thenThrow(new InvalidRequestException(404, ErrorMessage.NOT_FOUND.getLabel(), null, null));
     lenient().when(customer.create()).thenCallRealMethod();
     lenient().when(customer.create(any())).thenCallRealMethod();
 
-    GloballyPaidException exception = assertThrows(InvalidRequestException.class, customer::create);
+    DeepStackException exception = assertThrows(InvalidRequestException.class, customer::create);
 
     assertEquals(404, exception.getCode());
     assertEquals(ErrorMessage.NOT_FOUND.getLabel(), exception.getMessage());
   }
 
   @Test
-  public void testCreateCustomerFailWith401() throws GloballyPaidException, IOException {
+  public void testCreateCustomerFailWith401() throws DeepStackException, IOException {
     lenient()
         .when(customer.api(any()))
         .thenThrow(new AuthenticationException(401, ErrorMessage.UNAUTHORIZED.getLabel()));
     lenient().when(customer.create()).thenCallRealMethod();
     lenient().when(customer.create(any())).thenCallRealMethod();
 
-    GloballyPaidException exception = assertThrows(AuthenticationException.class, customer::create);
+    DeepStackException exception = assertThrows(AuthenticationException.class, customer::create);
 
     assertEquals(401, exception.getCode());
     assertEquals(ErrorMessage.UNAUTHORIZED.getLabel(), exception.getMessage());
   }
 
   @Test
-  public void testCreateCustomerFailWith403() throws GloballyPaidException, IOException {
+  public void testCreateCustomerFailWith403() throws DeepStackException, IOException {
     lenient()
         .when(customer.api(any()))
         .thenThrow(new ForbiddenException(403, ErrorMessage.FORBIDDEN.getLabel(), null));
     lenient().when(customer.create()).thenCallRealMethod();
     lenient().when(customer.create(any())).thenCallRealMethod();
 
-    GloballyPaidException exception = assertThrows(ForbiddenException.class, customer::create);
+    DeepStackException exception = assertThrows(ForbiddenException.class, customer::create);
 
     assertEquals(403, exception.getCode());
     assertEquals(ErrorMessage.FORBIDDEN.getLabel(), exception.getMessage());
   }
 
   @Test
-  public void testCreateCustomerFailWith405() throws GloballyPaidException, IOException {
+  public void testCreateCustomerFailWith405() throws DeepStackException, IOException {
     lenient()
         .when(customer.api(any()))
         .thenThrow(new NotAllowedException(405, ErrorMessage.METHOD_NOT_ALLOWED.getLabel()));
     lenient().when(customer.create()).thenCallRealMethod();
     lenient().when(customer.create(any())).thenCallRealMethod();
 
-    GloballyPaidException exception = assertThrows(NotAllowedException.class, customer::create);
+    DeepStackException exception = assertThrows(NotAllowedException.class, customer::create);
 
     assertEquals(405, exception.getCode());
     assertEquals(ErrorMessage.METHOD_NOT_ALLOWED.getLabel(), exception.getMessage());
   }
 
   @Test
-  public void testCreateCustomerFailWith406() throws GloballyPaidException, IOException {
+  public void testCreateCustomerFailWith406() throws DeepStackException, IOException {
     lenient()
         .when(customer.api(any()))
         .thenThrow(new NotAcceptableException(406, ErrorMessage.NOT_ACCEPTABLE.getLabel()));
     lenient().when(customer.create()).thenCallRealMethod();
     lenient().when(customer.create(any())).thenCallRealMethod();
 
-    GloballyPaidException exception = assertThrows(NotAcceptableException.class, customer::create);
+    DeepStackException exception = assertThrows(NotAcceptableException.class, customer::create);
 
     assertEquals(406, exception.getCode());
     assertEquals(ErrorMessage.NOT_ACCEPTABLE.getLabel(), exception.getMessage());
   }
 
   @Test
-  public void testCreateCustomerFailWith410() throws GloballyPaidException, IOException {
+  public void testCreateCustomerFailWith410() throws DeepStackException, IOException {
     lenient()
         .when(customer.api(any()))
         .thenThrow(new ApiException(410, ErrorMessage.GONE.getLabel(), null));
     lenient().when(customer.create()).thenCallRealMethod();
     lenient().when(customer.create(any())).thenCallRealMethod();
 
-    GloballyPaidException exception = assertThrows(ApiException.class, customer::create);
+    DeepStackException exception = assertThrows(ApiException.class, customer::create);
 
     assertEquals(410, exception.getCode());
     assertEquals(ErrorMessage.GONE.getLabel(), exception.getMessage());
   }
 
   @Test
-  public void testCreateCustomerFailWith429() throws GloballyPaidException, IOException {
+  public void testCreateCustomerFailWith429() throws DeepStackException, IOException {
     lenient()
         .when(customer.api(any()))
         .thenThrow(new RateLimitException(429, ErrorMessage.RATE_LIMIT_EXCEEDED.getLabel(), null));
     lenient().when(customer.create()).thenCallRealMethod();
     lenient().when(customer.create(any())).thenCallRealMethod();
 
-    GloballyPaidException exception = assertThrows(RateLimitException.class, customer::create);
+    DeepStackException exception = assertThrows(RateLimitException.class, customer::create);
 
     assertEquals(429, exception.getCode());
     assertEquals(ErrorMessage.RATE_LIMIT_EXCEEDED.getLabel(), exception.getMessage());
   }
 
   @Test
-  public void testListCustomerFailWith503() throws GloballyPaidException, IOException {
+  public void testListCustomerFailWith503() throws DeepStackException, IOException {
     lenient()
         .when(customer.api(any()))
         .thenThrow(new ApiException(503, ErrorMessage.SERVICE_UNAVAILABLE.getLabel(), null));
     lenient().when(customer.list()).thenCallRealMethod();
     lenient().when(customer.list(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception = assertThrows(ApiException.class, customer::list);
+    DeepStackException exception = assertThrows(ApiException.class, customer::list);
 
     assertEquals(503, exception.getCode());
     assertEquals(ErrorMessage.SERVICE_UNAVAILABLE.getLabel(), exception.getMessage());
   }
 
   @Test
-  public void testListCustomerFailWith500() throws GloballyPaidException, IOException {
+  public void testListCustomerFailWith500() throws DeepStackException, IOException {
     lenient()
         .when(customer.api(any()))
         .thenThrow(new ApiException(500, ErrorMessage.INTERNAL_SERVER_ERROR.getLabel(), null));
     lenient().when(customer.list()).thenCallRealMethod();
     lenient().when(customer.list(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception = assertThrows(ApiException.class, customer::list);
+    DeepStackException exception = assertThrows(ApiException.class, customer::list);
 
     assertEquals(500, exception.getCode());
     assertEquals(ErrorMessage.INTERNAL_SERVER_ERROR.getLabel(), exception.getMessage());
   }
 
   @Test
-  public void testUpdateCustomerSuccess() throws GloballyPaidException, IOException {
+  public void testUpdateCustomerSuccess() throws DeepStackException, IOException {
     Customer expectedCustomer = CustomerMockModel.customer();
     Response expectedResponse = CommonMockModel.response200WithCode00(expectedCustomer);
 
@@ -257,7 +251,7 @@ public class CustomerTest {
   }
 
   @Test
-  public void testUpdateCustomerFailWith400() throws GloballyPaidException, IOException {
+  public void testUpdateCustomerFailWith400() throws DeepStackException, IOException {
     Customer expectedCustomer = CustomerMockModel.customer();
     lenient()
         .when(customer.api(any()))
@@ -266,7 +260,7 @@ public class CustomerTest {
     lenient().when(customer.update(expectedCustomer.getId())).thenCallRealMethod();
     lenient().when(customer.update(expectedCustomer.getId(), null)).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(
             InvalidRequestException.class, () -> customer.update(expectedCustomer.getId()));
 
@@ -275,7 +269,7 @@ public class CustomerTest {
   }
 
   @Test
-  public void testUpdateCustomerFailWith401() throws GloballyPaidException, IOException {
+  public void testUpdateCustomerFailWith401() throws DeepStackException, IOException {
     Customer expectedCustomer = CustomerMockModel.customer();
     lenient()
         .when(customer.api(any()))
@@ -283,7 +277,7 @@ public class CustomerTest {
     lenient().when(customer.update(expectedCustomer.getId())).thenCallRealMethod();
     lenient().when(customer.update(expectedCustomer.getId(), null)).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(
             AuthenticationException.class, () -> customer.update(expectedCustomer.getId()));
 
@@ -292,7 +286,7 @@ public class CustomerTest {
   }
 
   @Test
-  public void testUpdateCustomerFailWith403() throws GloballyPaidException, IOException {
+  public void testUpdateCustomerFailWith403() throws DeepStackException, IOException {
     Customer expectedCustomer = CustomerMockModel.customer();
     lenient()
         .when(customer.api(any()))
@@ -300,7 +294,7 @@ public class CustomerTest {
     lenient().when(customer.update(expectedCustomer.getId())).thenCallRealMethod();
     lenient().when(customer.update(expectedCustomer.getId(), null)).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(ForbiddenException.class, () -> customer.update(expectedCustomer.getId()));
 
     assertEquals(403, exception.getCode());
@@ -308,7 +302,7 @@ public class CustomerTest {
   }
 
   @Test
-  public void testUpdateCustomerFailWith404() throws GloballyPaidException, IOException {
+  public void testUpdateCustomerFailWith404() throws DeepStackException, IOException {
     Customer expectedCustomer = CustomerMockModel.customer();
     lenient()
         .when(customer.api(any()))
@@ -316,7 +310,7 @@ public class CustomerTest {
     lenient().when(customer.update(expectedCustomer.getId())).thenCallRealMethod();
     lenient().when(customer.update(expectedCustomer.getId(), null)).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(
             InvalidRequestException.class, () -> customer.update(expectedCustomer.getId()));
 
@@ -325,7 +319,7 @@ public class CustomerTest {
   }
 
   @Test
-  public void testUpdateCustomerFailWith405() throws GloballyPaidException, IOException {
+  public void testUpdateCustomerFailWith405() throws DeepStackException, IOException {
     Customer expectedCustomer = CustomerMockModel.customer();
     lenient()
         .when(customer.api(any()))
@@ -333,7 +327,7 @@ public class CustomerTest {
     lenient().when(customer.update(expectedCustomer.getId())).thenCallRealMethod();
     lenient().when(customer.update(expectedCustomer.getId(), null)).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(NotAllowedException.class, () -> customer.update(expectedCustomer.getId()));
 
     assertEquals(405, exception.getCode());
@@ -341,7 +335,7 @@ public class CustomerTest {
   }
 
   @Test
-  public void testUpdateCustomerFailWith406() throws GloballyPaidException, IOException {
+  public void testUpdateCustomerFailWith406() throws DeepStackException, IOException {
     Customer expectedCustomer = CustomerMockModel.customer();
     lenient()
         .when(customer.api(any()))
@@ -349,7 +343,7 @@ public class CustomerTest {
     lenient().when(customer.update(expectedCustomer.getId())).thenCallRealMethod();
     lenient().when(customer.update(expectedCustomer.getId(), null)).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(NotAcceptableException.class, () -> customer.update(expectedCustomer.getId()));
 
     assertEquals(406, exception.getCode());
@@ -357,7 +351,7 @@ public class CustomerTest {
   }
 
   @Test
-  public void testUpdateCustomerFailWith410() throws GloballyPaidException, IOException {
+  public void testUpdateCustomerFailWith410() throws DeepStackException, IOException {
     Customer expectedCustomer = CustomerMockModel.customer();
     lenient()
         .when(customer.api(any()))
@@ -365,7 +359,7 @@ public class CustomerTest {
     lenient().when(customer.update(expectedCustomer.getId())).thenCallRealMethod();
     lenient().when(customer.update(expectedCustomer.getId(), null)).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(ApiException.class, () -> customer.update(expectedCustomer.getId()));
 
     assertEquals(410, exception.getCode());
@@ -373,7 +367,7 @@ public class CustomerTest {
   }
 
   @Test
-  public void testUpdateCustomerFailWith429() throws GloballyPaidException, IOException {
+  public void testUpdateCustomerFailWith429() throws DeepStackException, IOException {
     Customer expectedCustomer = CustomerMockModel.customer();
     lenient()
         .when(customer.api(any()))
@@ -381,7 +375,7 @@ public class CustomerTest {
     lenient().when(customer.update(expectedCustomer.getId())).thenCallRealMethod();
     lenient().when(customer.update(expectedCustomer.getId(), null)).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(RateLimitException.class, () -> customer.update(expectedCustomer.getId()));
 
     assertEquals(429, exception.getCode());
@@ -389,7 +383,7 @@ public class CustomerTest {
   }
 
   @Test
-  public void testUpdateCustomerFailWith503() throws GloballyPaidException, IOException {
+  public void testUpdateCustomerFailWith503() throws DeepStackException, IOException {
     Customer expectedCustomer = CustomerMockModel.customer();
     lenient()
         .when(customer.api(any()))
@@ -397,7 +391,7 @@ public class CustomerTest {
     lenient().when(customer.update(expectedCustomer.getId())).thenCallRealMethod();
     lenient().when(customer.update(expectedCustomer.getId(), null)).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(ApiException.class, () -> customer.update(expectedCustomer.getId()));
 
     assertEquals(503, exception.getCode());
@@ -405,7 +399,7 @@ public class CustomerTest {
   }
 
   @Test
-  public void testUpdateCustomerFailWith500() throws GloballyPaidException, IOException {
+  public void testUpdateCustomerFailWith500() throws DeepStackException, IOException {
     Customer expectedCustomer = CustomerMockModel.customer();
     lenient()
         .when(customer.api(any()))
@@ -413,7 +407,7 @@ public class CustomerTest {
     lenient().when(customer.update(expectedCustomer.getId())).thenCallRealMethod();
     lenient().when(customer.update(expectedCustomer.getId(), null)).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(ApiException.class, () -> customer.update(expectedCustomer.getId()));
 
     assertEquals(500, exception.getCode());
@@ -421,7 +415,7 @@ public class CustomerTest {
   }
 
   @Test
-  public void testRetrieveCustomerSuccess() throws GloballyPaidException, IOException {
+  public void testRetrieveCustomerSuccess() throws DeepStackException, IOException {
     Customer expectedCustomer = CustomerMockModel.customer();
     Response expectedResponse = CommonMockModel.response200WithCode00(expectedCustomer);
 
@@ -437,7 +431,7 @@ public class CustomerTest {
   }
 
   @Test
-  public void testRetrieveCustomerFailWith400() throws GloballyPaidException, IOException {
+  public void testRetrieveCustomerFailWith400() throws DeepStackException, IOException {
     Customer expectedCustomer = CustomerMockModel.customer();
     lenient()
         .when(customer.api(any()))
@@ -446,7 +440,7 @@ public class CustomerTest {
     lenient().when(customer.retrieve(expectedCustomer.getId())).thenCallRealMethod();
     lenient().when(customer.retrieve(expectedCustomer.getId(), null)).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(
             InvalidRequestException.class, () -> customer.retrieve(expectedCustomer.getId()));
 
@@ -455,7 +449,7 @@ public class CustomerTest {
   }
 
   @Test
-  public void testRetrieveCustomerFailWith401() throws GloballyPaidException, IOException {
+  public void testRetrieveCustomerFailWith401() throws DeepStackException, IOException {
     Customer expectedCustomer = CustomerMockModel.customer();
     lenient()
         .when(customer.api(any()))
@@ -463,7 +457,7 @@ public class CustomerTest {
     lenient().when(customer.retrieve(expectedCustomer.getId())).thenCallRealMethod();
     lenient().when(customer.retrieve(expectedCustomer.getId(), null)).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(
             AuthenticationException.class, () -> customer.retrieve(expectedCustomer.getId()));
 
@@ -472,7 +466,7 @@ public class CustomerTest {
   }
 
   @Test
-  public void testRetrieveCustomerFailWith403() throws GloballyPaidException, IOException {
+  public void testRetrieveCustomerFailWith403() throws DeepStackException, IOException {
     Customer expectedCustomer = CustomerMockModel.customer();
     lenient()
         .when(customer.api(any()))
@@ -480,7 +474,7 @@ public class CustomerTest {
     lenient().when(customer.retrieve(expectedCustomer.getId())).thenCallRealMethod();
     lenient().when(customer.retrieve(expectedCustomer.getId(), null)).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(ForbiddenException.class, () -> customer.retrieve(expectedCustomer.getId()));
 
     assertEquals(403, exception.getCode());
@@ -488,7 +482,7 @@ public class CustomerTest {
   }
 
   @Test
-  public void testRetrieveCustomerFailWith404() throws GloballyPaidException, IOException {
+  public void testRetrieveCustomerFailWith404() throws DeepStackException, IOException {
     Customer expectedCustomer = CustomerMockModel.customer();
     lenient()
         .when(customer.api(any()))
@@ -496,7 +490,7 @@ public class CustomerTest {
     lenient().when(customer.retrieve(expectedCustomer.getId())).thenCallRealMethod();
     lenient().when(customer.retrieve(expectedCustomer.getId(), null)).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(
             InvalidRequestException.class, () -> customer.retrieve(expectedCustomer.getId()));
 
@@ -505,7 +499,7 @@ public class CustomerTest {
   }
 
   @Test
-  public void testRetrieveCustomerFailWith405() throws GloballyPaidException, IOException {
+  public void testRetrieveCustomerFailWith405() throws DeepStackException, IOException {
     Customer expectedCustomer = CustomerMockModel.customer();
     lenient()
         .when(customer.api(any()))
@@ -513,7 +507,7 @@ public class CustomerTest {
     lenient().when(customer.retrieve(expectedCustomer.getId())).thenCallRealMethod();
     lenient().when(customer.retrieve(expectedCustomer.getId(), null)).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(NotAllowedException.class, () -> customer.retrieve(expectedCustomer.getId()));
 
     assertEquals(405, exception.getCode());
@@ -521,7 +515,7 @@ public class CustomerTest {
   }
 
   @Test
-  public void testRetrieveCustomerFailWith406() throws GloballyPaidException, IOException {
+  public void testRetrieveCustomerFailWith406() throws DeepStackException, IOException {
     Customer expectedCustomer = CustomerMockModel.customer();
     lenient()
         .when(customer.api(any()))
@@ -529,7 +523,7 @@ public class CustomerTest {
     lenient().when(customer.retrieve(expectedCustomer.getId())).thenCallRealMethod();
     lenient().when(customer.retrieve(expectedCustomer.getId(), null)).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(
             NotAcceptableException.class, () -> customer.retrieve(expectedCustomer.getId()));
 
@@ -538,7 +532,7 @@ public class CustomerTest {
   }
 
   @Test
-  public void testRetrieveCustomerFailWith410() throws GloballyPaidException, IOException {
+  public void testRetrieveCustomerFailWith410() throws DeepStackException, IOException {
     Customer expectedCustomer = CustomerMockModel.customer();
     lenient()
         .when(customer.api(any()))
@@ -546,7 +540,7 @@ public class CustomerTest {
     lenient().when(customer.retrieve(expectedCustomer.getId())).thenCallRealMethod();
     lenient().when(customer.retrieve(expectedCustomer.getId(), null)).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(ApiException.class, () -> customer.retrieve(expectedCustomer.getId()));
 
     assertEquals(410, exception.getCode());
@@ -554,7 +548,7 @@ public class CustomerTest {
   }
 
   @Test
-  public void testRetrieveCustomerFailWith429() throws GloballyPaidException, IOException {
+  public void testRetrieveCustomerFailWith429() throws DeepStackException, IOException {
     Customer expectedCustomer = CustomerMockModel.customer();
     lenient()
         .when(customer.api(any()))
@@ -562,7 +556,7 @@ public class CustomerTest {
     lenient().when(customer.retrieve(expectedCustomer.getId())).thenCallRealMethod();
     lenient().when(customer.retrieve(expectedCustomer.getId(), null)).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(RateLimitException.class, () -> customer.retrieve(expectedCustomer.getId()));
 
     assertEquals(429, exception.getCode());
@@ -570,7 +564,7 @@ public class CustomerTest {
   }
 
   @Test
-  public void testRetrieveCustomerFailWith503() throws GloballyPaidException, IOException {
+  public void testRetrieveCustomerFailWith503() throws DeepStackException, IOException {
     Customer expectedCustomer = CustomerMockModel.customer();
     lenient()
         .when(customer.api(any()))
@@ -578,7 +572,7 @@ public class CustomerTest {
     lenient().when(customer.retrieve(expectedCustomer.getId())).thenCallRealMethod();
     lenient().when(customer.retrieve(expectedCustomer.getId(), null)).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(ApiException.class, () -> customer.retrieve(expectedCustomer.getId()));
 
     assertEquals(503, exception.getCode());
@@ -586,7 +580,7 @@ public class CustomerTest {
   }
 
   @Test
-  public void testRetrieveCustomerFailWith500() throws GloballyPaidException, IOException {
+  public void testRetrieveCustomerFailWith500() throws DeepStackException, IOException {
     Customer expectedCustomer = CustomerMockModel.customer();
     lenient()
         .when(customer.api(any()))
@@ -594,7 +588,7 @@ public class CustomerTest {
     lenient().when(customer.retrieve(expectedCustomer.getId())).thenCallRealMethod();
     lenient().when(customer.retrieve(expectedCustomer.getId(), null)).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(ApiException.class, () -> customer.retrieve(expectedCustomer.getId()));
 
     assertEquals(500, exception.getCode());
@@ -602,7 +596,7 @@ public class CustomerTest {
   }
 
   @Test
-  public void testListCustomerSuccess() throws GloballyPaidException, IOException {
+  public void testListCustomerSuccess() throws DeepStackException, IOException {
     List<Customer> expectedCustomers = CustomerMockModel.customerList();
     Response expectedResponse = CommonMockModel.response200WithCode00(expectedCustomers);
 
@@ -618,7 +612,7 @@ public class CustomerTest {
   }
 
   @Test
-  public void testListCustomerFailWith400() throws GloballyPaidException, IOException {
+  public void testListCustomerFailWith400() throws DeepStackException, IOException {
     lenient()
         .when(customer.api(any()))
         .thenThrow(
@@ -626,7 +620,7 @@ public class CustomerTest {
     lenient().when(customer.list()).thenCallRealMethod();
     lenient().when(customer.list(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(InvalidRequestException.class, () -> customer.list());
 
     assertEquals(400, exception.getCode());
@@ -634,14 +628,14 @@ public class CustomerTest {
   }
 
   @Test
-  public void testListCustomerFailWith401() throws GloballyPaidException, IOException {
+  public void testListCustomerFailWith401() throws DeepStackException, IOException {
     lenient()
         .when(customer.api(any()))
         .thenThrow(new AuthenticationException(401, ErrorMessage.UNAUTHORIZED.getLabel()));
     lenient().when(customer.list()).thenCallRealMethod();
     lenient().when(customer.list(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(AuthenticationException.class, () -> customer.list());
 
     assertEquals(401, exception.getCode());
@@ -649,122 +643,122 @@ public class CustomerTest {
   }
 
   @Test
-  public void testListCustomerFailWith403() throws GloballyPaidException, IOException {
+  public void testListCustomerFailWith403() throws DeepStackException, IOException {
     lenient()
         .when(customer.api(any()))
         .thenThrow(new ForbiddenException(403, ErrorMessage.FORBIDDEN.getLabel(), null));
     lenient().when(customer.list()).thenCallRealMethod();
     lenient().when(customer.list(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception = assertThrows(ForbiddenException.class, customer::list);
+    DeepStackException exception = assertThrows(ForbiddenException.class, customer::list);
 
     assertEquals(403, exception.getCode());
     assertEquals(ErrorMessage.FORBIDDEN.getLabel(), exception.getMessage());
   }
 
   @Test
-  public void testListCustomerFailWith405() throws GloballyPaidException, IOException {
+  public void testListCustomerFailWith405() throws DeepStackException, IOException {
     lenient()
         .when(customer.api(any()))
         .thenThrow(new NotAllowedException(405, ErrorMessage.METHOD_NOT_ALLOWED.getLabel()));
     lenient().when(customer.list()).thenCallRealMethod();
     lenient().when(customer.list(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception = assertThrows(NotAllowedException.class, customer::list);
+    DeepStackException exception = assertThrows(NotAllowedException.class, customer::list);
 
     assertEquals(405, exception.getCode());
     assertEquals(ErrorMessage.METHOD_NOT_ALLOWED.getLabel(), exception.getMessage());
   }
 
   @Test
-  public void testListCustomerFailWith404() throws GloballyPaidException, IOException {
+  public void testListCustomerFailWith404() throws DeepStackException, IOException {
     lenient()
         .when(customer.api(any()))
         .thenThrow(new InvalidRequestException(404, ErrorMessage.NOT_FOUND.getLabel(), null, null));
     lenient().when(customer.list()).thenCallRealMethod();
     lenient().when(customer.list(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception = assertThrows(InvalidRequestException.class, customer::list);
+    DeepStackException exception = assertThrows(InvalidRequestException.class, customer::list);
 
     assertEquals(404, exception.getCode());
     assertEquals(ErrorMessage.NOT_FOUND.getLabel(), exception.getMessage());
   }
 
   @Test
-  public void testListCustomerFailWith406() throws GloballyPaidException, IOException {
+  public void testListCustomerFailWith406() throws DeepStackException, IOException {
     lenient()
         .when(customer.api(any()))
         .thenThrow(new NotAcceptableException(406, ErrorMessage.NOT_ACCEPTABLE.getLabel()));
     lenient().when(customer.list()).thenCallRealMethod();
     lenient().when(customer.list(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception = assertThrows(NotAcceptableException.class, customer::list);
+    DeepStackException exception = assertThrows(NotAcceptableException.class, customer::list);
 
     assertEquals(406, exception.getCode());
     assertEquals(ErrorMessage.NOT_ACCEPTABLE.getLabel(), exception.getMessage());
   }
 
   @Test
-  public void testListCustomerFailWith410() throws GloballyPaidException, IOException {
+  public void testListCustomerFailWith410() throws DeepStackException, IOException {
     lenient()
         .when(customer.api(any()))
         .thenThrow(new ApiException(410, ErrorMessage.GONE.getLabel(), null));
     lenient().when(customer.list()).thenCallRealMethod();
     lenient().when(customer.list(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception = assertThrows(ApiException.class, customer::list);
+    DeepStackException exception = assertThrows(ApiException.class, customer::list);
 
     assertEquals(410, exception.getCode());
     assertEquals(ErrorMessage.GONE.getLabel(), exception.getMessage());
   }
 
   @Test
-  public void testListCustomerFailWith429() throws GloballyPaidException, IOException {
+  public void testListCustomerFailWith429() throws DeepStackException, IOException {
     lenient()
         .when(customer.api(any()))
         .thenThrow(new RateLimitException(429, ErrorMessage.RATE_LIMIT_EXCEEDED.getLabel(), null));
     lenient().when(customer.list()).thenCallRealMethod();
     lenient().when(customer.list(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception = assertThrows(RateLimitException.class, customer::list);
+    DeepStackException exception = assertThrows(RateLimitException.class, customer::list);
 
     assertEquals(429, exception.getCode());
     assertEquals(ErrorMessage.RATE_LIMIT_EXCEEDED.getLabel(), exception.getMessage());
   }
 
   @Test
-  public void testCreateCustomerFailWith503() throws GloballyPaidException, IOException {
+  public void testCreateCustomerFailWith503() throws DeepStackException, IOException {
     lenient()
         .when(customer.api(any()))
         .thenThrow(new ApiException(503, ErrorMessage.SERVICE_UNAVAILABLE.getLabel(), null));
     lenient().when(customer.create()).thenCallRealMethod();
     lenient().when(customer.create(any())).thenCallRealMethod();
 
-    GloballyPaidException exception = assertThrows(ApiException.class, customer::create);
+    DeepStackException exception = assertThrows(ApiException.class, customer::create);
 
     assertEquals(503, exception.getCode());
     assertEquals(ErrorMessage.SERVICE_UNAVAILABLE.getLabel(), exception.getMessage());
   }
 
   @Test
-  public void testCreateCustomerFailWith500() throws GloballyPaidException, IOException {
+  public void testCreateCustomerFailWith500() throws DeepStackException, IOException {
     lenient()
         .when(customer.api(any()))
         .thenThrow(new ApiException(500, ErrorMessage.INTERNAL_SERVER_ERROR.getLabel(), null));
     lenient().when(customer.create()).thenCallRealMethod();
     lenient().when(customer.create(any())).thenCallRealMethod();
 
-    GloballyPaidException exception = assertThrows(ApiException.class, customer::create);
+    DeepStackException exception = assertThrows(ApiException.class, customer::create);
 
     assertEquals(500, exception.getCode());
     assertEquals(ErrorMessage.INTERNAL_SERVER_ERROR.getLabel(), exception.getMessage());
   }
 
   @Test
-  public void testUpdateCustomerWithNullIdFail() throws IOException, GloballyPaidException {
+  public void testUpdateCustomerWithNullIdFail() throws IOException, DeepStackException {
     when(customer.update(null)).thenCallRealMethod();
     when(customer.update(null, null)).thenCallRealMethod();
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(InvalidRequestException.class, () -> customer.update(null));
 
     assertEquals(400, exception.getCode());
