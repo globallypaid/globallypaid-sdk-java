@@ -1,8 +1,8 @@
 package com.deepstack.service;
 
+import com.deepstack.exception.DeepStackException;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.deepstack.exception.AuthenticationException;
-import com.deepstack.exception.GloballyPaidException;
 import com.deepstack.exception.InvalidRequestException;
 import com.deepstack.http.BasicInterface;
 import com.deepstack.http.Config;
@@ -48,10 +48,10 @@ public class DeepStack extends BasicInterface {
    * @param tokenRequest The {@link TokenRequest} object
    * @return The new {@link PaymentInstrumentToken} instance
    * @throws IOException In case of a JSON marshal error
-   * @throws GloballyPaidException In case of an API error
+   * @throws DeepStackException In case of an API error
    */
   public PaymentInstrumentToken token(TokenRequest tokenRequest)
-      throws IOException, GloballyPaidException {
+      throws IOException, DeepStackException {
     return token(tokenRequest, null);
   }
 
@@ -63,10 +63,10 @@ public class DeepStack extends BasicInterface {
    * @param requestOptions The {@link RequestOptions} object. Can accept null value.
    * @return The new {@link PaymentInstrumentToken} instance
    * @throws IOException In case of a JSON marshal error
-   * @throws GloballyPaidException In case of an API error
+   * @throws DeepStackException In case of an API error
    */
   public PaymentInstrumentToken token(TokenRequest tokenRequest, RequestOptions requestOptions)
-      throws IOException, GloballyPaidException {
+      throws IOException, DeepStackException {
     this.addAuthHeader(requestOptions);
     Request request =
         Request.builder()
@@ -94,10 +94,10 @@ public class DeepStack extends BasicInterface {
    * @param paymentInstrumentRequest
    * @return
    * @throws IOException
-   * @throws GloballyPaidException
+   * @throws DeepStackException
    */
   public PaymentInstrumentToken createPaymentInstrument(PaymentInstrumentRequest paymentInstrumentRequest)
-          throws IOException, GloballyPaidException{
+          throws IOException, DeepStackException {
     return createPaymentInstrument(paymentInstrumentRequest, null);
   }
 
@@ -107,11 +107,11 @@ public class DeepStack extends BasicInterface {
    * @param requestOptions
    * @return
    * @throws IOException
-   * @throws GloballyPaidException
+   * @throws DeepStackException
    */
   public PaymentInstrumentToken createPaymentInstrument(PaymentInstrumentRequest paymentInstrumentRequest, RequestOptions requestOptions)
-          throws IOException, GloballyPaidException{
-    this.addHmacHeader(paymentInstrumentRequest.toJson(), requestOptions);
+          throws IOException, DeepStackException {
+    this.addHmacHeader(paymentInstrumentRequest.toJson(), requestOptions, "POST");
     Request request =
             Request.builder()
                     .baseUri(getBaseUrl())
@@ -133,11 +133,25 @@ public class DeepStack extends BasicInterface {
 
   }
 
-  public boolean delete(String id)throws GloballyPaidException{
+  /**
+   * Delete payment instrument by paymentInstrumentID
+   * @param id
+   * @return
+   * @throws DeepStackException
+   */
+  public boolean delete(String id)throws DeepStackException {
     return this.delete(id, null);
   }
-  public boolean delete(String id, RequestOptions requestOptions) throws GloballyPaidException {
-    this.addHmacHeader("", requestOptions);
+
+  /**
+   * Delete payment instrument by paymentInstrumentID
+   * @param id
+   * @param requestOptions
+   * @return
+   * @throws DeepStackException
+   */
+  public boolean delete(String id, RequestOptions requestOptions) throws DeepStackException {
+    this.addHmacHeader("", requestOptions, "DELETE");
     String endpoint = URI.create("/payment-instrument/delete/".concat(urlEncodeId(id))).toString();
     Request request =
             Request.builder()
@@ -160,10 +174,10 @@ public class DeepStack extends BasicInterface {
    * @param chargeRequest The {@link ChargeRequest} object
    * @return The new {@link ChargeResponse} instance
    * @throws IOException In case of a JSON marshal error
-   * @throws GloballyPaidException In case of an API error
+   * @throws DeepStackException In case of an API error
    */
   public ChargeResponse charge(ChargeRequest chargeRequest)
-      throws IOException, GloballyPaidException {
+      throws IOException, DeepStackException {
     return charge(chargeRequest, null);
   }
 
@@ -174,10 +188,10 @@ public class DeepStack extends BasicInterface {
    * @param requestOptions The {@link RequestOptions} object. Can accept null value.
    * @return The new {@link ChargeResponse} instance
    * @throws IOException In case of a JSON marshal error
-   * @throws GloballyPaidException In case of an API error
+   * @throws DeepStackException In case of an API error
    */
   public ChargeResponse charge(ChargeRequest chargeRequest, RequestOptions requestOptions)
-      throws IOException, GloballyPaidException {
+      throws IOException, DeepStackException {
     if (!Optional.ofNullable(chargeRequest).isPresent()
         || Objects.isNull(chargeRequest.getSource())
         || chargeRequest.getSource() == null) {
@@ -185,7 +199,7 @@ public class DeepStack extends BasicInterface {
           HttpStatus.SC_BAD_REQUEST, "You must provide charge source!", null, null);
     }
 
-    this.addHmacHeader(chargeRequest.toJson(), requestOptions);
+    this.addHmacHeader(chargeRequest.toJson(), requestOptions, "POST");
     Request request =
         Request.builder()
             .baseUri(getBaseUrl())
@@ -212,11 +226,11 @@ public class DeepStack extends BasicInterface {
    * @param captureRequest The {@link CaptureRequest} object
    * @return the new {@link CaptureResponse} instance
    * @throws IOException In case of a JSON marshal error
-   * @throws GloballyPaidException In case of an API error
+   * @throws DeepStackException In case of an API error
    * @see #charge(ChargeRequest chargeRequest, RequestOptions requestOptions)
    */
   public CaptureResponse capture(CaptureRequest captureRequest)
-      throws IOException, GloballyPaidException {
+      throws IOException, DeepStackException {
     return capture(captureRequest, null);
   }
 
@@ -229,12 +243,12 @@ public class DeepStack extends BasicInterface {
    * @param requestOptions The {@link RequestOptions} object. Can accept null value.
    * @return the new {@link CaptureResponse} instance
    * @throws IOException In case of a JSON marshal error
-   * @throws GloballyPaidException In case of an API error
+   * @throws DeepStackException In case of an API error
    * @see #charge(ChargeRequest chargeRequest, RequestOptions requestOptions)
    */
   public CaptureResponse capture(CaptureRequest captureRequest, RequestOptions requestOptions)
-      throws IOException, GloballyPaidException {
-    this.addHmacHeader(captureRequest.toJson(), requestOptions);
+      throws IOException, DeepStackException {
+    this.addHmacHeader(captureRequest.toJson(), requestOptions, "POST");
     Request request =
         Request.builder()
             .baseUri(getBaseUrl())
@@ -261,10 +275,10 @@ public class DeepStack extends BasicInterface {
    * @param refundRequest The {@link RefundRequest} object
    * @return the new {@link RefundResponse} instance
    * @throws IOException In case of a JSON marshal error
-   * @throws GloballyPaidException In case of an API error
+   * @throws DeepStackException In case of an API error
    */
   public RefundResponse refund(RefundRequest refundRequest)
-      throws IOException, GloballyPaidException {
+      throws IOException, DeepStackException {
     return refund(refundRequest, null);
   }
 
@@ -276,11 +290,11 @@ public class DeepStack extends BasicInterface {
    * @param requestOptions The {@link RequestOptions} object. Can accept null value.
    * @return the new {@link RefundResponse} instance
    * @throws IOException In case of a JSON marshal error
-   * @throws GloballyPaidException In case of an API error
+   * @throws DeepStackException In case of an API error
    */
   public RefundResponse refund(RefundRequest refundRequest, RequestOptions requestOptions)
-      throws IOException, GloballyPaidException {
-    this.addHmacHeader(refundRequest.toJson(), requestOptions);
+      throws IOException, DeepStackException {
+    this.addHmacHeader(refundRequest.toJson(), requestOptions, "POST");
     Request request =
         Request.builder()
             .baseUri(getBaseUrl())

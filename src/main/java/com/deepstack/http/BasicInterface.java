@@ -1,7 +1,7 @@
 package com.deepstack.http;
 
 import com.deepstack.exception.AuthenticationException;
-import com.deepstack.exception.GloballyPaidException;
+import com.deepstack.exception.DeepStackException;
 import com.deepstack.exception.InvalidRequestException;
 import com.deepstack.model.Entity;
 import com.deepstack.util.HmacUtils;
@@ -174,7 +174,7 @@ public abstract class BasicInterface extends Entity {
    * @throws InvalidRequestException In case of a problem during HMAC generation
    * @throws AuthenticationException In case of a bad defined secret API or APP keys
    */
-  public void addHmacHeader(String content, RequestOptions requestOptions)
+  public void addHmacHeader(String content, RequestOptions requestOptions, String requestMethod)
       throws InvalidRequestException, AuthenticationException {
     if (Objects.nonNull(requestOptions)
         && !TextUtils.isBlank(requestOptions.getAppId())
@@ -184,13 +184,14 @@ public abstract class BasicInterface extends Entity {
               content,
               requestOptions.getSharedSecret(),
               requestOptions.getAppId(),
-              HMAC_ALGORITHM_TYPE);
+              HMAC_ALGORITHM_TYPE,
+                  requestMethod);
       this.requestHeaders.put(HMAC_HEADER, hmac);
     } else {
       if (TextUtils.isBlank(appId) || TextUtils.isBlank(sharedSecret)) {
         throw new AuthenticationException("Api and App keys must be defined!");
       }
-      String hmac = HmacUtils.createHmacHeader(content, sharedSecret, appId, HMAC_ALGORITHM_TYPE);
+      String hmac = HmacUtils.createHmacHeader(content, sharedSecret, appId, HMAC_ALGORITHM_TYPE, requestMethod);
       this.requestHeaders.put(HMAC_HEADER, hmac);
     }
   }
@@ -212,9 +213,9 @@ public abstract class BasicInterface extends Entity {
    *
    * @param request the (@link Request) object
    * @return the {@link Response} object
-   * @throws GloballyPaidException in case of a network error
+   * @throws DeepStackException in case of a network error
    */
-  public Response api(final Request request) throws GloballyPaidException {
+  public Response api(final Request request) throws DeepStackException {
     final Request req = new Request();
 
     req.setMethod(request.getMethod());
@@ -240,7 +241,7 @@ public abstract class BasicInterface extends Entity {
     return makeApiCall(req);
   }
 
-  public Response tokenapi(final Request request) throws GloballyPaidException {
+  public Response tokenapi(final Request request) throws DeepStackException {
     final Request req = new Request();
 
     req.setMethod(request.getMethod());
@@ -271,9 +272,9 @@ public abstract class BasicInterface extends Entity {
    *
    * @param request the {@link Request} to make
    * @return the {@link Response} object
-   * @throws GloballyPaidException in case of a network error
+   * @throws DeepStackException in case of a network error
    */
-  public Response makeApiCall(final Request request) throws GloballyPaidException {
+  public Response makeApiCall(final Request request) throws DeepStackException {
     return client.api(request);
   }
 

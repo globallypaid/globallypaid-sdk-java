@@ -1,7 +1,7 @@
 package com.deepstack.example.payment;
 
 import com.deepstack.example.MockModel;
-import com.deepstack.exception.GloballyPaidException;
+import com.deepstack.exception.DeepStackException;
 import com.deepstack.http.Config;
 import com.deepstack.model.CaptureRequest;
 import com.deepstack.model.CaptureResponse;
@@ -14,7 +14,7 @@ import com.deepstack.service.DeepStack;
 import java.io.IOException;
 
 public class ChargeAuthenticationTransError {
-  public static void main(String[] args) throws IOException, GloballyPaidException {
+  public static void main(String[] args) throws IOException, DeepStackException {
 
     DeepStack deepStack =
         new DeepStack(
@@ -36,14 +36,14 @@ public class ChargeAuthenticationTransError {
     PaymentInstrumentToken paymentInstrumentToken = null;
     try {
       paymentInstrumentToken = deepStack.token(tokenRequest);
-    } catch (GloballyPaidException e) {
+    } catch (DeepStackException e) {
       System.out.println(
           "Code: "
               + e.getCode()
               + "\nMsg: "
               + e.getMessage()
               + "\nApi error: "
-              + e.getGloballyPaidError());
+              + e.getDeepStackError());
     }
     if (paymentInstrumentToken != null && !paymentInstrumentToken.getId().isEmpty()) {
 

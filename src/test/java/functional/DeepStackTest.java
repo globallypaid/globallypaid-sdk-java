@@ -1,13 +1,7 @@
 package functional;
 
-import com.deepstack.exception.ApiException;
-import com.deepstack.exception.AuthenticationException;
-import com.deepstack.exception.ForbiddenException;
-import com.deepstack.exception.GloballyPaidException;
-import com.deepstack.exception.InvalidRequestException;
-import com.deepstack.exception.NotAcceptableException;
-import com.deepstack.exception.NotAllowedException;
-import com.deepstack.exception.RateLimitException;
+import com.deepstack.exception.*;
+import com.deepstack.exception.DeepStackException;
 import com.deepstack.http.ErrorMessage;
 import com.deepstack.http.Response;
 import com.deepstack.model.*;
@@ -36,7 +30,7 @@ public class DeepStackTest {
   DeepStack deepStack;
 
   @Test
-  public void testChargeSaleTransactionWithClientInfo() throws GloballyPaidException, IOException {
+  public void testChargeSaleTransactionWithClientInfo() throws DeepStackException, IOException {
     ChargeRequest chargeRequest =
         GloballyPaidMockModel.getChargeRequestWithCaptureTrueAndClientInfo();
 
@@ -55,7 +49,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testChargeWithoutSourceFailWith400() throws GloballyPaidException, IOException {
+  public void testChargeWithoutSourceFailWith400() throws DeepStackException, IOException {
     ChargeRequest chargeRequest = GloballyPaidMockModel.chargeRequestWithoutSource();
     lenient()
         .when(deepStack.api(any()))
@@ -64,7 +58,7 @@ public class DeepStackTest {
     lenient().when(deepStack.charge(any())).thenCallRealMethod();
     lenient().when(deepStack.charge(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(InvalidRequestException.class, () -> deepStack.charge(chargeRequest));
 
     assertEquals(400, exception.getCode());
@@ -72,7 +66,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testChargeFailWith400() throws GloballyPaidException, IOException {
+  public void testChargeFailWith400() throws DeepStackException, IOException {
     ChargeRequest chargeRequest = GloballyPaidMockModel.chargeRequestOnlyWithSource();
     lenient()
         .when(deepStack.api(any()))
@@ -81,7 +75,7 @@ public class DeepStackTest {
     lenient().when(deepStack.charge(any())).thenCallRealMethod();
     lenient().when(deepStack.charge(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(InvalidRequestException.class, () -> deepStack.charge(chargeRequest));
 
     assertEquals(400, exception.getCode());
@@ -89,7 +83,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testChargeFailWith404() throws GloballyPaidException, IOException {
+  public void testChargeFailWith404() throws DeepStackException, IOException {
     ChargeRequest chargeRequest = GloballyPaidMockModel.chargeRequestOnlyWithSource();
     lenient()
         .when(deepStack.api(any()))
@@ -97,7 +91,7 @@ public class DeepStackTest {
     lenient().when(deepStack.charge(any())).thenCallRealMethod();
     lenient().when(deepStack.charge(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(InvalidRequestException.class, () -> deepStack.charge(chargeRequest));
 
     assertEquals(404, exception.getCode());
@@ -105,7 +99,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testChargeFailWith401() throws GloballyPaidException, IOException {
+  public void testChargeFailWith401() throws DeepStackException, IOException {
     ChargeRequest chargeRequest = GloballyPaidMockModel.chargeRequestOnlyWithSource();
     lenient()
         .when(deepStack.api(any()))
@@ -113,7 +107,7 @@ public class DeepStackTest {
     lenient().when(deepStack.charge(any())).thenCallRealMethod();
     lenient().when(deepStack.charge(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(AuthenticationException.class, () -> deepStack.charge(chargeRequest));
 
     assertEquals(401, exception.getCode());
@@ -121,7 +115,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testChargeFailWith403() throws GloballyPaidException, IOException {
+  public void testChargeFailWith403() throws DeepStackException, IOException {
     ChargeRequest chargeRequest = GloballyPaidMockModel.chargeRequestOnlyWithSource();
     lenient()
         .when(deepStack.api(any()))
@@ -129,7 +123,7 @@ public class DeepStackTest {
     lenient().when(deepStack.charge(any())).thenCallRealMethod();
     lenient().when(deepStack.charge(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(ForbiddenException.class, () -> deepStack.charge(chargeRequest));
 
     assertEquals(403, exception.getCode());
@@ -137,7 +131,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testChargeFailWith405() throws GloballyPaidException, IOException {
+  public void testChargeFailWith405() throws DeepStackException, IOException {
     ChargeRequest chargeRequest = GloballyPaidMockModel.chargeRequestOnlyWithSource();
     lenient()
         .when(deepStack.api(any()))
@@ -145,7 +139,7 @@ public class DeepStackTest {
     lenient().when(deepStack.charge(any())).thenCallRealMethod();
     lenient().when(deepStack.charge(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(NotAllowedException.class, () -> deepStack.charge(chargeRequest));
 
     assertEquals(405, exception.getCode());
@@ -153,7 +147,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testChargeFailWith406() throws GloballyPaidException, IOException {
+  public void testChargeFailWith406() throws DeepStackException, IOException {
     ChargeRequest chargeRequest = GloballyPaidMockModel.chargeRequestOnlyWithSource();
     lenient()
         .when(deepStack.api(any()))
@@ -161,7 +155,7 @@ public class DeepStackTest {
     lenient().when(deepStack.charge(any())).thenCallRealMethod();
     lenient().when(deepStack.charge(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(NotAcceptableException.class, () -> deepStack.charge(chargeRequest));
 
     assertEquals(406, exception.getCode());
@@ -169,7 +163,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testChargeFailWith410() throws GloballyPaidException, IOException {
+  public void testChargeFailWith410() throws DeepStackException, IOException {
     ChargeRequest chargeRequest = GloballyPaidMockModel.chargeRequestOnlyWithSource();
     lenient()
         .when(deepStack.api(any()))
@@ -177,7 +171,7 @@ public class DeepStackTest {
     lenient().when(deepStack.charge(any())).thenCallRealMethod();
     lenient().when(deepStack.charge(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(ApiException.class, () -> deepStack.charge(chargeRequest));
 
     assertEquals(410, exception.getCode());
@@ -185,7 +179,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testChargeFailWith429() throws GloballyPaidException, IOException {
+  public void testChargeFailWith429() throws DeepStackException, IOException {
     ChargeRequest chargeRequest = GloballyPaidMockModel.chargeRequestOnlyWithSource();
     lenient()
         .when(deepStack.api(any()))
@@ -193,7 +187,7 @@ public class DeepStackTest {
     lenient().when(deepStack.charge(any())).thenCallRealMethod();
     lenient().when(deepStack.charge(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(RateLimitException.class, () -> deepStack.charge(chargeRequest));
 
     assertEquals(429, exception.getCode());
@@ -201,7 +195,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testChargeFailWith503() throws GloballyPaidException, IOException {
+  public void testChargeFailWith503() throws DeepStackException, IOException {
     ChargeRequest chargeRequest = GloballyPaidMockModel.chargeRequestOnlyWithSource();
     lenient()
         .when(deepStack.api(any()))
@@ -209,7 +203,7 @@ public class DeepStackTest {
     lenient().when(deepStack.charge(any())).thenCallRealMethod();
     lenient().when(deepStack.charge(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(ApiException.class, () -> deepStack.charge(chargeRequest));
 
     assertEquals(503, exception.getCode());
@@ -217,7 +211,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testChargeFailWith500() throws GloballyPaidException, IOException {
+  public void testChargeFailWith500() throws DeepStackException, IOException {
     ChargeRequest chargeRequest = GloballyPaidMockModel.chargeRequestOnlyWithSource();
     lenient()
         .when(deepStack.api(any()))
@@ -225,7 +219,7 @@ public class DeepStackTest {
     lenient().when(deepStack.charge(any())).thenCallRealMethod();
     lenient().when(deepStack.charge(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(ApiException.class, () -> deepStack.charge(chargeRequest));
 
     assertEquals(500, exception.getCode());
@@ -233,7 +227,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testCaptureSuccess() throws GloballyPaidException, IOException {
+  public void testCaptureSuccess() throws DeepStackException, IOException {
     CaptureRequest captureRequest = GloballyPaidMockModel.captureRequest();
 
     CaptureResponse expectedCaptureResponse = GloballyPaidMockModel.captureResponse(captureRequest);
@@ -254,7 +248,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testCaptureFailWith400() throws GloballyPaidException, IOException {
+  public void testCaptureFailWith400() throws DeepStackException, IOException {
     CaptureRequest captureRequest = GloballyPaidMockModel.captureRequest();
     lenient()
         .when(deepStack.api(any()))
@@ -263,7 +257,7 @@ public class DeepStackTest {
     lenient().when(deepStack.capture(any())).thenCallRealMethod();
     lenient().when(deepStack.capture(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(InvalidRequestException.class, () -> deepStack.capture(captureRequest));
 
     assertEquals(400, exception.getCode());
@@ -271,7 +265,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testCaptureFailWith404() throws GloballyPaidException, IOException {
+  public void testCaptureFailWith404() throws DeepStackException, IOException {
     CaptureRequest captureRequest = GloballyPaidMockModel.captureRequest();
     lenient()
         .when(deepStack.api(any()))
@@ -279,7 +273,7 @@ public class DeepStackTest {
     lenient().when(deepStack.capture(any())).thenCallRealMethod();
     lenient().when(deepStack.capture(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(InvalidRequestException.class, () -> deepStack.capture(captureRequest));
 
     assertEquals(404, exception.getCode());
@@ -287,7 +281,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testCaptureFailWith401() throws GloballyPaidException, IOException {
+  public void testCaptureFailWith401() throws DeepStackException, IOException {
     CaptureRequest captureRequest = GloballyPaidMockModel.captureRequest();
     lenient()
         .when(deepStack.api(any()))
@@ -295,7 +289,7 @@ public class DeepStackTest {
     lenient().when(deepStack.capture(any())).thenCallRealMethod();
     lenient().when(deepStack.capture(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(AuthenticationException.class, () -> deepStack.capture(captureRequest));
 
     assertEquals(401, exception.getCode());
@@ -303,7 +297,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testCaptureFailWith403() throws GloballyPaidException, IOException {
+  public void testCaptureFailWith403() throws DeepStackException, IOException {
     CaptureRequest captureRequest = GloballyPaidMockModel.captureRequest();
     lenient()
         .when(deepStack.api(any()))
@@ -311,7 +305,7 @@ public class DeepStackTest {
     lenient().when(deepStack.capture(any())).thenCallRealMethod();
     lenient().when(deepStack.capture(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(ForbiddenException.class, () -> deepStack.capture(captureRequest));
 
     assertEquals(403, exception.getCode());
@@ -319,7 +313,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testCaptureFailWith405() throws GloballyPaidException, IOException {
+  public void testCaptureFailWith405() throws DeepStackException, IOException {
     CaptureRequest captureRequest = GloballyPaidMockModel.captureRequest();
     lenient()
         .when(deepStack.api(any()))
@@ -327,7 +321,7 @@ public class DeepStackTest {
     lenient().when(deepStack.capture(any())).thenCallRealMethod();
     lenient().when(deepStack.capture(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(NotAllowedException.class, () -> deepStack.capture(captureRequest));
 
     assertEquals(405, exception.getCode());
@@ -335,7 +329,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testCaptureFailWith406() throws GloballyPaidException, IOException {
+  public void testCaptureFailWith406() throws DeepStackException, IOException {
     CaptureRequest captureRequest = GloballyPaidMockModel.captureRequest();
     lenient()
         .when(deepStack.api(any()))
@@ -343,7 +337,7 @@ public class DeepStackTest {
     lenient().when(deepStack.capture(any())).thenCallRealMethod();
     lenient().when(deepStack.capture(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(NotAcceptableException.class, () -> deepStack.capture(captureRequest));
 
     assertEquals(406, exception.getCode());
@@ -351,7 +345,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testCaptureFailWith410() throws GloballyPaidException, IOException {
+  public void testCaptureFailWith410() throws DeepStackException, IOException {
     CaptureRequest captureRequest = GloballyPaidMockModel.captureRequest();
     lenient()
         .when(deepStack.api(any()))
@@ -359,7 +353,7 @@ public class DeepStackTest {
     lenient().when(deepStack.capture(any())).thenCallRealMethod();
     lenient().when(deepStack.capture(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(ApiException.class, () -> deepStack.capture(captureRequest));
 
     assertEquals(410, exception.getCode());
@@ -367,7 +361,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testCaptureFailWith429() throws GloballyPaidException, IOException {
+  public void testCaptureFailWith429() throws DeepStackException, IOException {
     CaptureRequest captureRequest = GloballyPaidMockModel.captureRequest();
     lenient()
         .when(deepStack.api(any()))
@@ -375,7 +369,7 @@ public class DeepStackTest {
     lenient().when(deepStack.capture(any())).thenCallRealMethod();
     lenient().when(deepStack.capture(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(RateLimitException.class, () -> deepStack.capture(captureRequest));
 
     assertEquals(429, exception.getCode());
@@ -383,7 +377,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testCaptureFailWith503() throws GloballyPaidException, IOException {
+  public void testCaptureFailWith503() throws DeepStackException, IOException {
     CaptureRequest captureRequest = GloballyPaidMockModel.captureRequest();
     lenient()
         .when(deepStack.api(any()))
@@ -391,7 +385,7 @@ public class DeepStackTest {
     lenient().when(deepStack.capture(any())).thenCallRealMethod();
     lenient().when(deepStack.capture(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(ApiException.class, () -> deepStack.capture(captureRequest));
 
     assertEquals(503, exception.getCode());
@@ -399,7 +393,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testCaptureFailWith500() throws GloballyPaidException, IOException {
+  public void testCaptureFailWith500() throws DeepStackException, IOException {
     CaptureRequest captureRequest = GloballyPaidMockModel.captureRequest();
     lenient()
         .when(deepStack.api(any()))
@@ -407,7 +401,7 @@ public class DeepStackTest {
     lenient().when(deepStack.capture(any())).thenCallRealMethod();
     lenient().when(deepStack.capture(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(ApiException.class, () -> deepStack.capture(captureRequest));
 
     assertEquals(500, exception.getCode());
@@ -415,7 +409,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testRefundSuccess() throws GloballyPaidException, IOException {
+  public void testRefundSuccess() throws DeepStackException, IOException {
     RefundRequest refundRequest = GloballyPaidMockModel.refundRequest();
 
     RefundResponse expectedRefundResponse = GloballyPaidMockModel.refundResponse(refundRequest);
@@ -436,7 +430,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testRefundFailWith400() throws GloballyPaidException, IOException {
+  public void testRefundFailWith400() throws DeepStackException, IOException {
     RefundRequest refundRequest = GloballyPaidMockModel.refundRequest();
     lenient()
         .when(deepStack.api(any()))
@@ -445,7 +439,7 @@ public class DeepStackTest {
     lenient().when(deepStack.refund(any())).thenCallRealMethod();
     lenient().when(deepStack.refund(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(InvalidRequestException.class, () -> deepStack.refund(refundRequest));
 
     assertEquals(400, exception.getCode());
@@ -453,7 +447,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testRefundFailWith404() throws GloballyPaidException, IOException {
+  public void testRefundFailWith404() throws DeepStackException, IOException {
     RefundRequest refundRequest = GloballyPaidMockModel.refundRequest();
     lenient()
         .when(deepStack.api(any()))
@@ -461,7 +455,7 @@ public class DeepStackTest {
     lenient().when(deepStack.refund(any())).thenCallRealMethod();
     lenient().when(deepStack.refund(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(InvalidRequestException.class, () -> deepStack.refund(refundRequest));
 
     assertEquals(404, exception.getCode());
@@ -469,7 +463,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testRefundFailWith401() throws GloballyPaidException, IOException {
+  public void testRefundFailWith401() throws DeepStackException, IOException {
     RefundRequest refundRequest = GloballyPaidMockModel.refundRequest();
     lenient()
         .when(deepStack.api(any()))
@@ -477,7 +471,7 @@ public class DeepStackTest {
     lenient().when(deepStack.refund(any())).thenCallRealMethod();
     lenient().when(deepStack.refund(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(AuthenticationException.class, () -> deepStack.refund(refundRequest));
 
     assertEquals(401, exception.getCode());
@@ -485,7 +479,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testRefundFailWith403() throws GloballyPaidException, IOException {
+  public void testRefundFailWith403() throws DeepStackException, IOException {
     RefundRequest refundRequest = GloballyPaidMockModel.refundRequest();
     lenient()
         .when(deepStack.api(any()))
@@ -493,7 +487,7 @@ public class DeepStackTest {
     lenient().when(deepStack.refund(any())).thenCallRealMethod();
     lenient().when(deepStack.refund(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(ForbiddenException.class, () -> deepStack.refund(refundRequest));
 
     assertEquals(403, exception.getCode());
@@ -501,7 +495,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testRefundFailWith405() throws GloballyPaidException, IOException {
+  public void testRefundFailWith405() throws DeepStackException, IOException {
     RefundRequest refundRequest = GloballyPaidMockModel.refundRequest();
     lenient()
         .when(deepStack.api(any()))
@@ -509,7 +503,7 @@ public class DeepStackTest {
     lenient().when(deepStack.refund(any())).thenCallRealMethod();
     lenient().when(deepStack.refund(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(NotAllowedException.class, () -> deepStack.refund(refundRequest));
 
     assertEquals(405, exception.getCode());
@@ -517,7 +511,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testRefundFailWith406() throws GloballyPaidException, IOException {
+  public void testRefundFailWith406() throws DeepStackException, IOException {
     RefundRequest refundRequest = GloballyPaidMockModel.refundRequest();
     lenient()
         .when(deepStack.api(any()))
@@ -525,7 +519,7 @@ public class DeepStackTest {
     lenient().when(deepStack.refund(any())).thenCallRealMethod();
     lenient().when(deepStack.refund(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(NotAcceptableException.class, () -> deepStack.refund(refundRequest));
 
     assertEquals(406, exception.getCode());
@@ -533,7 +527,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testRefundFailWith410() throws GloballyPaidException, IOException {
+  public void testRefundFailWith410() throws DeepStackException, IOException {
     RefundRequest refundRequest = GloballyPaidMockModel.refundRequest();
     lenient()
         .when(deepStack.api(any()))
@@ -541,7 +535,7 @@ public class DeepStackTest {
     lenient().when(deepStack.refund(any())).thenCallRealMethod();
     lenient().when(deepStack.refund(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(ApiException.class, () -> deepStack.refund(refundRequest));
 
     assertEquals(410, exception.getCode());
@@ -549,7 +543,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testRefundFailWith429() throws GloballyPaidException, IOException {
+  public void testRefundFailWith429() throws DeepStackException, IOException {
     RefundRequest refundRequest = GloballyPaidMockModel.refundRequest();
     lenient()
         .when(deepStack.api(any()))
@@ -557,7 +551,7 @@ public class DeepStackTest {
     lenient().when(deepStack.refund(any())).thenCallRealMethod();
     lenient().when(deepStack.refund(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(RateLimitException.class, () -> deepStack.refund(refundRequest));
 
     assertEquals(429, exception.getCode());
@@ -565,7 +559,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testRefundFailWith503() throws GloballyPaidException, IOException {
+  public void testRefundFailWith503() throws DeepStackException, IOException {
     RefundRequest refundRequest = GloballyPaidMockModel.refundRequest();
     lenient()
         .when(deepStack.api(any()))
@@ -573,7 +567,7 @@ public class DeepStackTest {
     lenient().when(deepStack.refund(any())).thenCallRealMethod();
     lenient().when(deepStack.refund(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(ApiException.class, () -> deepStack.refund(refundRequest));
 
     assertEquals(503, exception.getCode());
@@ -581,7 +575,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testRefundFailWith500() throws GloballyPaidException, IOException {
+  public void testRefundFailWith500() throws DeepStackException, IOException {
     RefundRequest refundRequest = GloballyPaidMockModel.refundRequest();
     lenient()
         .when(deepStack.api(any()))
@@ -589,7 +583,7 @@ public class DeepStackTest {
     lenient().when(deepStack.refund(any())).thenCallRealMethod();
     lenient().when(deepStack.refund(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(ApiException.class, () -> deepStack.refund(refundRequest));
 
     assertEquals(500, exception.getCode());
@@ -597,7 +591,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testTokenizeSuccess() throws GloballyPaidException, IOException {
+  public void testTokenizeSuccess() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
 
     PaymentInstrumentToken expectedTokenResponse =
@@ -620,7 +614,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testTokenizeFailWith400() throws GloballyPaidException, IOException {
+  public void testTokenizeFailWith400() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     lenient()
         .when(deepStack.api(any()))
@@ -629,7 +623,7 @@ public class DeepStackTest {
     lenient().when(deepStack.token(any())).thenCallRealMethod();
     lenient().when(deepStack.token(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(InvalidRequestException.class, () -> deepStack.token(tokenRequest));
 
     assertEquals(400, exception.getCode());
@@ -637,7 +631,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testTokenizeFailWith404() throws GloballyPaidException, IOException {
+  public void testTokenizeFailWith404() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     lenient()
         .when(deepStack.tokenapi(any()))
@@ -645,7 +639,7 @@ public class DeepStackTest {
     lenient().when(deepStack.token(any())).thenCallRealMethod();
     lenient().when(deepStack.token(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(InvalidRequestException.class, () -> deepStack.token(tokenRequest));
 
     assertEquals(404, exception.getCode());
@@ -653,7 +647,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testTokenizeFailWith401() throws GloballyPaidException, IOException {
+  public void testTokenizeFailWith401() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     lenient()
         .when(deepStack.tokenapi(any()))
@@ -661,7 +655,7 @@ public class DeepStackTest {
     lenient().when(deepStack.token(any())).thenCallRealMethod();
     lenient().when(deepStack.token(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(AuthenticationException.class, () -> deepStack.token(tokenRequest));
 
     assertEquals(401, exception.getCode());
@@ -669,7 +663,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testTokenizeFailWith403() throws GloballyPaidException, IOException {
+  public void testTokenizeFailWith403() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     lenient()
         .when(deepStack.tokenapi(any()))
@@ -677,7 +671,7 @@ public class DeepStackTest {
     lenient().when(deepStack.token(any())).thenCallRealMethod();
     lenient().when(deepStack.token(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(ForbiddenException.class, () -> deepStack.token(tokenRequest));
 
     assertEquals(403, exception.getCode());
@@ -685,7 +679,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testTokenizeFailWith405() throws GloballyPaidException, IOException {
+  public void testTokenizeFailWith405() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     lenient()
         .when(deepStack.tokenapi(any()))
@@ -693,7 +687,7 @@ public class DeepStackTest {
     lenient().when(deepStack.token(any())).thenCallRealMethod();
     lenient().when(deepStack.token(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(NotAllowedException.class, () -> deepStack.token(tokenRequest));
 
     assertEquals(405, exception.getCode());
@@ -701,7 +695,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testTokenizeFailWith406() throws GloballyPaidException, IOException {
+  public void testTokenizeFailWith406() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     lenient()
         .when(deepStack.tokenapi(any()))
@@ -709,7 +703,7 @@ public class DeepStackTest {
     lenient().when(deepStack.token(any())).thenCallRealMethod();
     lenient().when(deepStack.token(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(NotAcceptableException.class, () -> deepStack.token(tokenRequest));
 
     assertEquals(406, exception.getCode());
@@ -717,7 +711,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testTokenizeFailWith410() throws GloballyPaidException, IOException {
+  public void testTokenizeFailWith410() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     lenient()
         .when(deepStack.tokenapi(any()))
@@ -725,7 +719,7 @@ public class DeepStackTest {
     lenient().when(deepStack.token(any())).thenCallRealMethod();
     lenient().when(deepStack.token(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(ApiException.class, () -> deepStack.token(tokenRequest));
 
     assertEquals(410, exception.getCode());
@@ -733,7 +727,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testTokenizeFailWith429() throws GloballyPaidException, IOException {
+  public void testTokenizeFailWith429() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     lenient()
         .when(deepStack.tokenapi(any()))
@@ -741,7 +735,7 @@ public class DeepStackTest {
     lenient().when(deepStack.token(any())).thenCallRealMethod();
     lenient().when(deepStack.token(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(RateLimitException.class, () -> deepStack.token(tokenRequest));
 
     assertEquals(429, exception.getCode());
@@ -749,7 +743,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testTokenizeFailWith503() throws GloballyPaidException, IOException {
+  public void testTokenizeFailWith503() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     lenient()
         .when(deepStack.tokenapi(any()))
@@ -757,7 +751,7 @@ public class DeepStackTest {
     lenient().when(deepStack.token(any())).thenCallRealMethod();
     lenient().when(deepStack.token(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(ApiException.class, () -> deepStack.token(tokenRequest));
 
     assertEquals(503, exception.getCode());
@@ -765,7 +759,7 @@ public class DeepStackTest {
   }
 
   @Test
-  public void testTokenizeFailWith500() throws GloballyPaidException, IOException {
+  public void testTokenizeFailWith500() throws DeepStackException, IOException {
     TokenRequest tokenRequest = GloballyPaidMockModel.tokenRequest();
     lenient()
         .when(deepStack.tokenapi(any()))
@@ -773,7 +767,7 @@ public class DeepStackTest {
     lenient().when(deepStack.token(any())).thenCallRealMethod();
     lenient().when(deepStack.token(any(), any())).thenCallRealMethod();
 
-    GloballyPaidException exception =
+    DeepStackException exception =
         assertThrows(ApiException.class, () -> deepStack.token(tokenRequest));
 
     assertEquals(500, exception.getCode());
@@ -782,10 +776,10 @@ public class DeepStackTest {
 
   // TODO handle null request
   //  @Test
-  //  public void testCaptureWithNullIdFail() throws IOException, GloballyPaidException {
+  //  public void testCaptureWithNullIdFail() throws IOException, DeepStackException {
   //    when(globallyPaid.capture(null)).thenCallRealMethod();
   //    when(globallyPaid.capture(null, null)).thenCallRealMethod();
-  //    GloballyPaidException exception =
+  //    DeepStackException exception =
   //        assertThrows(InvalidRequestException.class, () -> globallyPaid.capture(null));
   //
   //    assertEquals(400, exception.getCode());

@@ -1,7 +1,7 @@
 package com.deepstack.example.paymentinstrument;
 
 import com.deepstack.example.MockModel;
-import com.deepstack.exception.GloballyPaidException;
+import com.deepstack.exception.DeepStackException;
 import com.deepstack.http.Config;
 import com.deepstack.model.PaymentInstrumentToken;
 import com.deepstack.service.Customer;
@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 public class PaymentInstrumentUpdate {
-    public static void main(String[] args) throws IOException, GloballyPaidException {
+    public static void main(String[] args) throws IOException, DeepStackException {
 
         new PaymentInstrument(
                 Config.builder()
@@ -58,14 +58,14 @@ public class PaymentInstrumentUpdate {
             PaymentInstrumentToken updatedPaymentInstrumentToken =
                     paymentInstrument.update(retrievedPaymentInstrument.getId());
             System.out.println("Updated PaymentInstrument: " + updatedPaymentInstrumentToken);
-        } catch (GloballyPaidException e) {
+        } catch (DeepStackException e) {
             System.out.println(
                     "PaymentInstrument update ---> Code: "
                             + e.getCode()
                             + "\nMsg: "
                             + e.getMessage()
                             + "\nApi error: "
-                            + e.getGloballyPaidError());
+                            + e.getDeepStackError());
         }
     }
 }

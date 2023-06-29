@@ -1,7 +1,7 @@
 package com.deepstack.example.paymentinstrument;
 
 import com.deepstack.example.MockModel;
-import com.deepstack.exception.GloballyPaidException;
+import com.deepstack.exception.DeepStackException;
 import com.deepstack.http.Config;
 import com.deepstack.model.ChargeRequest;
 import com.deepstack.model.CreditCard;
@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 public class PaymentInstrumentCreateAndChargeSale {
-    public static void main(String[] args) throws IOException, GloballyPaidException {
+    public static void main(String[] args) throws IOException, DeepStackException {
 
         new PaymentInstrument(
                 Config.builder()
@@ -74,14 +74,14 @@ public class PaymentInstrumentCreateAndChargeSale {
             DeepStack deepStack = new DeepStack();
             deepStack.charge(chargeRequest);
 
-        } catch (GloballyPaidException e) {
+        } catch (DeepStackException e) {
             System.out.println(
                     "PaymentInstrument create ---> Code: "
                             + e.getCode()
                             + "\nMsg: "
                             + e.getMessage()
                             + "\nApi error: "
-                            + e.getGloballyPaidError());
+                            + e.getDeepStackError());
         }
     }
 }

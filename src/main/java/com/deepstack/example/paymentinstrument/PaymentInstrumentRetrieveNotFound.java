@@ -1,13 +1,13 @@
 package com.deepstack.example.paymentinstrument;
 
-import com.deepstack.exception.GloballyPaidException;
+import com.deepstack.exception.DeepStackException;
 import com.deepstack.http.Config;
 import com.deepstack.model.PaymentInstrumentToken;
 import com.deepstack.service.PaymentInstrument;
 import java.io.IOException;
 
 public class PaymentInstrumentRetrieveNotFound {
-  public static void main(String[] args) throws IOException, GloballyPaidException {
+  public static void main(String[] args) throws IOException, DeepStackException {
 
     PaymentInstrument paymentInstrument =
         new PaymentInstrument(
@@ -21,14 +21,14 @@ public class PaymentInstrumentRetrieveNotFound {
     try {
       PaymentInstrumentToken retrievedPaymentInstrument = paymentInstrument.retrieve("123455");
       System.out.println("Retrieved PaymentInstrument: " + retrievedPaymentInstrument);
-    } catch (GloballyPaidException e) {
+    } catch (DeepStackException e) {
       System.out.println(
           "PaymentInstrument retrieve ---> Code: "
               + e.getCode()
               + "\nMsg: "
               + e.getMessage()
               + "\nApi error: "
-              + e.getGloballyPaidError());
+              + e.getDeepStackError());
     }
   }
 }

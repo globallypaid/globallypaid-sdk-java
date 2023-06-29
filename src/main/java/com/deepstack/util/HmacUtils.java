@@ -4,7 +4,11 @@ import com.deepstack.exception.InvalidRequestException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Base64;
+import java.util.Date;
+import java.util.TimeZone;
 import java.util.UUID;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -55,12 +59,21 @@ public class HmacUtils {
    * @throws InvalidRequestException In case there is a problem during HMAC generation.
    */
   public static String createHmacHeader(
-      String message, String sharedSecret, String appId, String algorithm)
+      String message, String sharedSecret, String appId, String algorithm, String requestMethod)
       throws InvalidRequestException {
     UUID guid = UUID.randomUUID();
-    String hashInBase64 = hmacDigest(message, sharedSecret, algorithm);
+    Date requestDate = Date.from(Instant.now());
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+    String requestTime = sdf.format(requestDate);
+
+    String stringToHash = appId.concat("|").concat(requestMethod).concat("|").concat(requestTime).concat("|").concat(guid.toString()).concat("|").concat(message);
+
+
+    String hashInBase64 = hmacDigest(stringToHash, sharedSecret, algorithm);
     String hmacHeader =
-        appId.concat(":POST:").concat(guid.toString()).concat(":").concat(hashInBase64);
+        appId.concat("|").concat(requestMethod).concat("|").concat(requestTime).concat("|").concat(guid.toString()).concat("|").concat(hashInBase64);
     return Base64.getEncoder().encodeToString(hmacHeader.getBytes(StandardCharsets.US_ASCII));
   }
 }

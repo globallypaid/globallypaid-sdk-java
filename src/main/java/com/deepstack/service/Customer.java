@@ -1,9 +1,9 @@
 package com.deepstack.service;
 
+import com.deepstack.exception.DeepStackException;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.deepstack.exception.AuthenticationException;
-import com.deepstack.exception.GloballyPaidException;
 import com.deepstack.exception.InvalidRequestException;
 import com.deepstack.http.BasicInterface;
 import com.deepstack.http.Config;
@@ -81,9 +81,9 @@ public class Customer extends BasicInterface {
    *
    * @return the new {@link Customer} instance
    * @throws IOException In case of a JSON marshal error
-   * @throws GloballyPaidException In case of an API error
+   * @throws DeepStackException In case of an API error
    */
-  public Customer create() throws IOException, GloballyPaidException {
+  public Customer create() throws IOException, DeepStackException {
     return create(null);
   }
 
@@ -93,11 +93,11 @@ public class Customer extends BasicInterface {
    * @param requestOptions The {@link RequestOptions} object. Can accept null value.
    * @return the new {@link Customer} instance
    * @throws IOException In case of a JSON marshal error
-   * @throws GloballyPaidException In case of an API error
+   * @throws DeepStackException In case of an API error
    */
-  public Customer create(RequestOptions requestOptions) throws IOException, GloballyPaidException {
+  public Customer create(RequestOptions requestOptions) throws IOException, DeepStackException {
     String customer = this.toJson();
-    this.addHmacHeader(customer, requestOptions);
+    this.addHmacHeader(customer, requestOptions, "POST");
     Request request =
         Request.builder()
             .baseUri(getBaseUrl())
@@ -121,9 +121,9 @@ public class Customer extends BasicInterface {
    * @param id {@link Customer} identifier
    * @return the updated {@link Customer} instance
    * @throws IOException In case of a JSON marshal error
-   * @throws GloballyPaidException In case of an API error
+   * @throws DeepStackException In case of an API error
    */
-  public Customer update(String id) throws IOException, GloballyPaidException {
+  public Customer update(String id) throws IOException, DeepStackException {
     return update(id, null);
   }
 
@@ -134,14 +134,14 @@ public class Customer extends BasicInterface {
    * @param requestOptions {@link RequestOptions}
    * @return the updated {@link Customer} instance
    * @throws IOException In case of a JSON marshal error
-   * @throws GloballyPaidException In case of an API error
+   * @throws DeepStackException In case of an API error
    */
   public Customer update(String id, RequestOptions requestOptions)
-      throws IOException, GloballyPaidException {
+      throws IOException, DeepStackException {
     getRequestHeaders().clear();
     String endpoint = URI.create(CUSTOMER_URL.concat(SLASH).concat(urlEncodeId(id))).toString();
     String customer = this.toJson();
-    this.addHmacHeader(customer, requestOptions);
+    this.addHmacHeader(customer, requestOptions, "PUT");
     Request request =
         Request.builder()
             .baseUri(getBaseUrl())
@@ -163,9 +163,9 @@ public class Customer extends BasicInterface {
    * Permanently deletes a customer.
    *
    * @param id {@link Customer} identifier
-   * @throws GloballyPaidException In case of an API error
+   * @throws DeepStackException In case of an API error
    */
-  public void delete(String id) throws GloballyPaidException {
+  public void delete(String id) throws DeepStackException {
     delete(id, null);
   }
 
@@ -174,10 +174,10 @@ public class Customer extends BasicInterface {
    *
    * @param id {@link Customer} identifier
    * @param requestOptions {@link RequestOptions}
-   * @throws GloballyPaidException In case of an API error
+   * @throws DeepStackException In case of an API error
    */
-  public void delete(String id, RequestOptions requestOptions) throws GloballyPaidException {
-    this.addHmacHeader("", requestOptions);
+  public void delete(String id, RequestOptions requestOptions) throws DeepStackException {
+    this.addHmacHeader("", requestOptions, "DELETE");
     String endpoint = URI.create(CUSTOMER_URL.concat(SLASH).concat(urlEncodeId(id))).toString();
     Request request =
         Request.builder()
@@ -197,10 +197,10 @@ public class Customer extends BasicInterface {
    *
    * @param <T> Class type
    * @return list of {@link Customer}
-   * @throws GloballyPaidException In case of an API error
+   * @throws DeepStackException In case of an API error
    * @throws IOException In case of a JSON marshal error
    */
-  public <T> T list() throws GloballyPaidException, IOException {
+  public <T> T list() throws DeepStackException, IOException {
     return list(null, null);
   }
 
@@ -210,12 +210,12 @@ public class Customer extends BasicInterface {
    * @param queryParams Query parameters for page size and index
    * @param requestOptions {@link RequestOptions}
    * @return list of {@link Customer}
-   * @throws GloballyPaidException In case of an API error
+   * @throws DeepStackException In case of an API error
    * @throws IOException In case of a JSON marshal error
    * @param <T> Class type
    */
   public <T> T list(Map<String, String> queryParams, RequestOptions requestOptions)
-      throws GloballyPaidException, IOException {
+      throws DeepStackException, IOException {
     getRequestHeaders().clear();
     this.addAuthHeader(requestOptions);
     String endpoint = URI.create(CUSTOMER_URL).toString();
@@ -242,10 +242,10 @@ public class Customer extends BasicInterface {
    * @param id {@link Customer} identifier
    * @param <T> Class type
    * @return the {@link Customer} instance
-   * @throws GloballyPaidException In case of an API error
+   * @throws DeepStackException In case of an API error
    * @throws IOException In case of a JSON marshal error
    */
-  public <T> T retrieve(String id) throws GloballyPaidException, IOException {
+  public <T> T retrieve(String id) throws DeepStackException, IOException {
     return retrieve(id, null);
   }
 
@@ -257,11 +257,11 @@ public class Customer extends BasicInterface {
    * @param <T> Class type
    * @return the {@link Customer} instance or list of {@link Customer} if Customer identifier is
    *     null or empty
-   * @throws GloballyPaidException In case of an API error
+   * @throws DeepStackException In case of an API error
    * @throws IOException In case of a JSON marshal error
    */
   public <T> T retrieve(String id, RequestOptions requestOptions)
-      throws GloballyPaidException, IOException {
+      throws DeepStackException, IOException {
     getRequestHeaders().clear();
     this.addAuthHeader(requestOptions);
     String endpoint = URI.create(CUSTOMER_URL.concat(SLASH).concat(urlEncodeId(id))).toString();

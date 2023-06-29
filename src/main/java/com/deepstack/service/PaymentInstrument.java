@@ -1,9 +1,9 @@
 package com.deepstack.service;
 
+import com.deepstack.exception.DeepStackException;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.deepstack.exception.AuthenticationException;
-import com.deepstack.exception.GloballyPaidException;
 import com.deepstack.exception.InvalidRequestException;
 import com.deepstack.http.BasicInterface;
 import com.deepstack.http.Config;
@@ -103,9 +103,9 @@ public class PaymentInstrument extends BasicInterface {
      *
      * @return the new {@link PaymentInstrument} instance
      * @throws IOException           In case of a JSON marshal error
-     * @throws GloballyPaidException In case of an API error
+     * @throws DeepStackException In case of an API error
      */
-    public PaymentInstrumentToken create() throws IOException, GloballyPaidException {
+    public PaymentInstrumentToken create() throws IOException, DeepStackException {
         return create(null);
     }
 
@@ -115,12 +115,12 @@ public class PaymentInstrument extends BasicInterface {
      * @param requestOptions {@link RequestOptions}
      * @return the new {@link PaymentInstrument} instance
      * @throws IOException           In case of a JSON marshal error
-     * @throws GloballyPaidException In case of an API error
+     * @throws DeepStackException In case of an API error
      */
     public PaymentInstrumentToken create(RequestOptions requestOptions)
-            throws IOException, GloballyPaidException {
+            throws IOException, DeepStackException {
         String paymentInstrument = this.toJson();
-        this.addHmacHeader(paymentInstrument, requestOptions);
+        this.addHmacHeader(paymentInstrument, requestOptions, "POST");
         Request request =
                 Request.builder()
                         .baseUri(getBaseUrl())
@@ -146,9 +146,9 @@ public class PaymentInstrument extends BasicInterface {
      * @param id {@link PaymentInstrument} identifier
      * @return the updated {@link PaymentInstrument} instance
      * @throws IOException           In case of a JSON marshal error
-     * @throws GloballyPaidException In case of an API error
+     * @throws DeepStackException In case of an API error
      */
-    public PaymentInstrumentToken update(String id) throws IOException, GloballyPaidException {
+    public PaymentInstrumentToken update(String id) throws IOException, DeepStackException {
         return update(id, null);
     }
 
@@ -159,14 +159,14 @@ public class PaymentInstrument extends BasicInterface {
      * @param requestOptions {@link RequestOptions}
      * @return the updated {@link PaymentInstrument} instance
      * @throws IOException           In case of a JSON marshal error
-     * @throws GloballyPaidException In case of an API error
+     * @throws DeepStackException In case of an API error
      */
     public PaymentInstrumentToken update(String id, RequestOptions requestOptions)
-            throws IOException, GloballyPaidException {
+            throws IOException, DeepStackException {
         getRequestHeaders().clear();
         String endpoint = URI.create(PAYMENTINSTRUMENT_URL.concat(urlEncodeId(id))).toString();
         String paymentInstrument = this.toJson();
-        this.addHmacHeader(paymentInstrument, requestOptions);
+        this.addHmacHeader(paymentInstrument, requestOptions, "PUT");
         Request request =
                 Request.builder()
                         .baseUri(getBaseUrl())
@@ -190,9 +190,9 @@ public class PaymentInstrument extends BasicInterface {
      * Permanently deletes a payment instrument.
      *
      * @param id {@link PaymentInstrument} identifier
-     * @throws GloballyPaidException In case of an API error
+     * @throws DeepStackException In case of an API error
      */
-    public void delete(String id) throws GloballyPaidException {
+    public void delete(String id) throws DeepStackException {
         delete(id, null);
     }
 
@@ -201,10 +201,10 @@ public class PaymentInstrument extends BasicInterface {
      *
      * @param id             {@link PaymentInstrument} identifier
      * @param requestOptions {@link RequestOptions}
-     * @throws GloballyPaidException In case of an API error
+     * @throws DeepStackException In case of an API error
      */
-    public void delete(String id, RequestOptions requestOptions) throws GloballyPaidException {
-        this.addHmacHeader("", requestOptions);
+    public void delete(String id, RequestOptions requestOptions) throws DeepStackException {
+        this.addHmacHeader("", requestOptions, "DELETE");
         String endpoint = URI.create(PAYMENTINSTRUMENT_URL.concat(urlEncodeId(id))).toString();
         Request request =
                 Request.builder()
@@ -225,10 +225,10 @@ public class PaymentInstrument extends BasicInterface {
      * @param customerId {@link Customer} identifier
      * @param <T>        Class type
      * @return list of {@link PaymentInstrument}
-     * @throws GloballyPaidException In case of an API error
+     * @throws DeepStackException In case of an API error
      * @throws IOException           In case of a JSON marshal error
      */
-    public <T> T list(String customerId) throws GloballyPaidException, IOException {
+    public <T> T list(String customerId) throws DeepStackException, IOException {
         return list(customerId, null, null);
     }
 
@@ -240,12 +240,12 @@ public class PaymentInstrument extends BasicInterface {
      * @param requestOptions {@link RequestOptions}
      * @param <T>            Class type
      * @return list of {@link PaymentInstrument}
-     * @throws GloballyPaidException In case of an API error
+     * @throws DeepStackException In case of an API error
      * @throws IOException           In case of a JSON marshal error
      */
     public <T> T list(
             String customerId, Map<String, String> queryParams, RequestOptions requestOptions)
-            throws GloballyPaidException, IOException {
+            throws DeepStackException, IOException {
         getRequestHeaders().clear();
         this.addAuthHeader(requestOptions);
         String endpoint =
@@ -274,10 +274,10 @@ public class PaymentInstrument extends BasicInterface {
      * @param id  {@link PaymentInstrument} identifier
      * @param <T> Class type
      * @return the {@link PaymentInstrument} instance
-     * @throws GloballyPaidException In case of an API error
+     * @throws DeepStackException In case of an API error
      * @throws IOException           In case of a JSON marshal error
      */
-    public <T> T retrieve(String id) throws GloballyPaidException, IOException {
+    public <T> T retrieve(String id) throws DeepStackException, IOException {
         return retrieve(id, null);
     }
 
@@ -288,11 +288,11 @@ public class PaymentInstrument extends BasicInterface {
      * @param requestOptions {@link RequestOptions}
      * @param <T>            Class type
      * @return the {@link PaymentInstrument} instance
-     * @throws GloballyPaidException In case of an API error
+     * @throws DeepStackException In case of an API error
      * @throws IOException           In case of a JSON marshal error
      */
     public <T> T retrieve(String id, RequestOptions requestOptions)
-            throws GloballyPaidException, IOException {
+            throws DeepStackException, IOException {
         getRequestHeaders().clear();
         this.addAuthHeader(requestOptions);
         String endpoint = URI.create(PAYMENTINSTRUMENT_URL.concat(urlEncodeId(id))).toString();

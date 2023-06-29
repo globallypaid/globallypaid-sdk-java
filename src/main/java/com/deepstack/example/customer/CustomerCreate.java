@@ -1,6 +1,6 @@
 package com.deepstack.example.customer;
 
-import com.deepstack.exception.GloballyPaidException;
+import com.deepstack.exception.DeepStackException;
 import com.deepstack.http.Config;
 import com.deepstack.service.Customer;
 
@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 public class CustomerCreate {
-    public static void main(String[] args) throws IOException, GloballyPaidException {
+    public static void main(String[] args) throws IOException, DeepStackException {
 
         Customer customer =
                 new Customer(
@@ -27,14 +27,14 @@ public class CustomerCreate {
             System.out.println("Create customer: " + createdCustomer);
 
             System.out.println("Retrieved customer: " + customer.retrieve(createdCustomer.getId()));
-        } catch (GloballyPaidException e) {
+        } catch (DeepStackException e) {
             System.out.println(
                     "Customer create ---> Code: "
                             + e.getCode()
                             + "\nMsg: "
                             + e.getMessage()
                             + "\nApi error: "
-                            + e.getGloballyPaidError());
+                            + e.getDeepStackError());
         }
     }
 }

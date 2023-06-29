@@ -1,14 +1,7 @@
 package com.deepstack.http;
 
-import com.deepstack.exception.ApiConnectionException;
-import com.deepstack.exception.ApiException;
-import com.deepstack.exception.AuthenticationException;
-import com.deepstack.exception.ForbiddenException;
-import com.deepstack.exception.GloballyPaidException;
-import com.deepstack.exception.InvalidRequestException;
-import com.deepstack.exception.NotAcceptableException;
-import com.deepstack.exception.NotAllowedException;
-import com.deepstack.exception.RateLimitException;
+import com.deepstack.exception.*;
+import com.deepstack.exception.DeepStackException;
 import com.deepstack.util.JsonUtils;
 import java.io.IOException;
 import java.net.ConnectException;
@@ -81,9 +74,9 @@ public class Client {
    * @param request the {@link Request} object
    * @return the {@link Response} object
    * @throws URISyntaxException In case of a URI syntax error
-   * @throws GloballyPaidException In case of an API error
+   * @throws DeepStackException In case of an API error
    */
-  public Response get(Request request) throws URISyntaxException, GloballyPaidException {
+  public Response get(Request request) throws URISyntaxException, DeepStackException {
     URI uri = this.buildUri(request.getBaseUri(), request.getEndpoint(), request.getQueryParams());
     HttpGet httpGet = new HttpGet(uri.toString());
 
@@ -102,9 +95,9 @@ public class Client {
    * @param request the {@link Request} object
    * @return the {@link Response} object
    * @throws URISyntaxException In case of a URI syntax error
-   * @throws GloballyPaidException In case of an API error
+   * @throws DeepStackException In case of an API error
    */
-  public Response post(Request request) throws URISyntaxException, GloballyPaidException {
+  public Response post(Request request) throws URISyntaxException, DeepStackException {
     URI uri = this.buildUri(request.getBaseUri(), request.getEndpoint(), request.getQueryParams());
     HttpPost httpPost = new HttpPost(uri.toString());
 
@@ -132,9 +125,9 @@ public class Client {
    * @param request the {@link Request} object
    * @return the {@link Response} object
    * @throws URISyntaxException In case of a URI syntax error
-   * @throws GloballyPaidException In case of an API error
+   * @throws DeepStackException In case of an API error
    */
-  public Response put(Request request) throws URISyntaxException, GloballyPaidException {
+  public Response put(Request request) throws URISyntaxException, DeepStackException {
     URI uri = this.buildUri(request.getBaseUri(), request.getEndpoint(), request.getQueryParams());
     HttpPut httpPut = new HttpPut(uri.toString());
 
@@ -155,9 +148,9 @@ public class Client {
    * @param request the {@link Request} object
    * @return the {@link Response} object
    * @throws URISyntaxException In case of a URI syntax error
-   * @throws GloballyPaidException In case of an API error
+   * @throws DeepStackException In case of an API error
    */
-  public Response delete(Request request) throws URISyntaxException, GloballyPaidException {
+  public Response delete(Request request) throws URISyntaxException, DeepStackException {
     URI uri = this.buildUri(request.getBaseUri(), request.getEndpoint(), request.getQueryParams());
     HttpDeleteWithBody httpDelete = new HttpDeleteWithBody(uri.toString());
 
@@ -185,11 +178,11 @@ public class Client {
    * @param requestBase the {@link HttpRequestBase} object
    * @param requestOptions the {@link RequestOptions} object
    * @return the {@link Response} object
-   * @throws GloballyPaidException If the request fails for any reason
+   * @throws DeepStackException If the request fails for any reason
    */
   private Response executeApiCallWithRetries(
-      HttpRequestBase requestBase, RequestOptions requestOptions) throws GloballyPaidException {
-    GloballyPaidException requestException;
+      HttpRequestBase requestBase, RequestOptions requestOptions) throws DeepStackException {
+    DeepStackException requestException;
     Response response = null;
     int retry = 0;
 
@@ -198,7 +191,7 @@ public class Client {
 
       try {
         response = executeApiCall(requestBase, requestOptions);
-      } catch (GloballyPaidException e) {
+      } catch (DeepStackException e) {
         requestException = e;
       }
 
@@ -230,10 +223,10 @@ public class Client {
    * @param requestBase the {@link HttpRequestBase} object
    * @param requestOptions the {@link RequestOptions} object
    * @return the {@link Response} object
-   * @throws GloballyPaidException If the request fails for any reason
+   * @throws DeepStackException If the request fails for any reason
    */
   private Response executeApiCall(HttpRequestBase requestBase, RequestOptions requestOptions)
-      throws GloballyPaidException {
+      throws DeepStackException {
     try {
       CloseableHttpClient httpClient =
           HttpClientBuilder.create()
@@ -272,9 +265,9 @@ public class Client {
    *
    * @param request The {@link Request} object
    * @return The {@link Response} object
-   * @throws GloballyPaidException If the request fails for any reason
+   * @throws DeepStackException If the request fails for any reason
    */
-  public Response api(Request request) throws GloballyPaidException {
+  public Response api(Request request) throws DeepStackException {
     try {
       if (request.getMethod() == null) {
         throw new InvalidRequestException(
@@ -310,10 +303,10 @@ public class Client {
    *
    * @param response from a call to a CloseableHttpClient
    * @return the {@link Response} object
-   * @throws GloballyPaidException If the request fails for any reason
+   * @throws DeepStackException If the request fails for any reason
    */
-  public Response getResponse(CloseableHttpResponse response) throws GloballyPaidException {
-    ResponseHandler<String> handler = new GloballyPaidResponseHandler();
+  public Response getResponse(CloseableHttpResponse response) throws DeepStackException {
+    ResponseHandler<String> handler = new DeepStackResponseHandler();
     int statusCode = response.getStatusLine().getStatusCode();
     Header[] headers = response.getAllHeaders();
     Map<String, String> responseHeaders = new HashMap<>();
@@ -350,8 +343,8 @@ public class Client {
     return res;
   }
 
-  private void handleApiError(Response response) throws GloballyPaidException {
-    GloballyPaidException exception;
+  private void handleApiError(Response response) throws DeepStackException {
+    DeepStackException exception;
 
     Integer statusCode = response.getStatusCode();
     switch (statusCode) {
@@ -393,7 +386,7 @@ public class Client {
     }
 
     try {
-      exception.setGloballyPaidError(response.getBody());
+      exception.setDeepStackError(response.getBody());
     } catch (IOException e) {
       throw new ApiException(
           statusCode,
@@ -418,7 +411,7 @@ public class Client {
                     : resBody.get(MESSAGE).toString(),
                 null,
                 null);
-        exception.setGloballyPaidError(res.getBody());
+        exception.setDeepStackError(res.getBody());
         throw exception;
       }
     } catch (IOException e) {
@@ -429,7 +422,7 @@ public class Client {
 
   private boolean shouldRetry(
       int numRetries,
-      GloballyPaidException exception,
+      DeepStackException exception,
       RequestOptions requestOptions,
       Response response) {
 

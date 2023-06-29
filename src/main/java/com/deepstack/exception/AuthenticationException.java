@@ -1,6 +1,6 @@
 package com.deepstack.exception;
 
-public class AuthenticationException extends GloballyPaidException {
+public class AuthenticationException extends DeepStackException {
   private static final long serialVersionUID = 2L;
 
   public AuthenticationException(Integer code, String message) {

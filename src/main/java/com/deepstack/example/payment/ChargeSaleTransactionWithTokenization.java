@@ -1,6 +1,6 @@
 package com.deepstack.example.payment;
 
-import com.deepstack.exception.GloballyPaidException;
+import com.deepstack.exception.DeepStackException;
 import com.deepstack.http.Config;
 import com.deepstack.http.RequestOptions;
 import com.deepstack.model.*;
@@ -14,7 +14,7 @@ import com.deepstack.service.DeepStack;
 import java.io.IOException;
 
 public class ChargeSaleTransactionWithTokenization {
-  public static void main(String[] args) throws IOException, GloballyPaidException {
+  public static void main(String[] args) throws IOException, DeepStackException {
     try {
       DeepStack deepStack =
           new DeepStack(
@@ -84,14 +84,14 @@ public class ChargeSaleTransactionWithTokenization {
         ChargeResponse chargeResponse = DeepStack.builder().build().charge(chargeRequest);
         System.out.println(chargeResponse);
       }
-    } catch (GloballyPaidException e) {
+    } catch (DeepStackException e) {
       System.out.println(
           "ChargeSaleTrans ---> Code: "
               + e.getCode()
               + "\nMsg: "
               + e.getMessage()
               + "\nApi error: "
-              + e.getGloballyPaidError());
+              + e.getDeepStackError());
       throw e;
     }
   }
