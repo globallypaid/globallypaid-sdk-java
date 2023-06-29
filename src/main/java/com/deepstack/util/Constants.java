@@ -5,9 +5,9 @@ public class Constants {
         throw new IllegalStateException("Constants class");
     }
 
-//    public static final String SANDBOX_BASE_URL = "qa.api.globallypaid.com";
+    public static final String SANDBOX_BASE_URL = "qa.api.globallypaid.com";
 
-    public static final String SANDBOX_BASE_URL = "localhost:5001";
+//    public static final String SANDBOX_BASE_URL = "localhost:5001";
     public static final String LIVE_BASE_URL = "api.globallypaid.com";
     public static final String API_BASE_URL = "/api";
     public static final String API_TRANSACTION_BASE = "/payments";
